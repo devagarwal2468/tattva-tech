@@ -49,15 +49,15 @@ export default function AdminProducts({ token }) {
     name: '',
     tagline: '',
     category: 'Marketing',
-    badge: 'Flagship',
+    badge: '',
     icon: 'Send',
     previewType: 'mail',
     description: '',
     productUrl: '',
     features: '',
-    activeUsers: '10K+',
-    deliveryRate: '98%',
-    engagement: '3x',
+    activeUsers: '',
+    deliveryRate: '',
+    engagement: '',
     isFeatured: false,
     isPublished: true,
     order: 0,
@@ -109,15 +109,15 @@ export default function AdminProducts({ token }) {
       name: '',
       tagline: '',
       category: 'Marketing',
-      badge: 'Flagship',
+      badge: '',
       icon: 'Send',
       previewType: 'mail',
       description: '',
       productUrl: '',
       features: 'High Deliverability, Real-time Analytics, 24/7 Automation',
-      activeUsers: '10K+',
-      deliveryRate: '98%',
-      engagement: '3x',
+      activeUsers: '',
+      deliveryRate: '',
+      engagement: '',
       isFeatured: false,
       isPublished: true,
       order: products.length + 1,
@@ -133,15 +133,15 @@ export default function AdminProducts({ token }) {
       name: product.name,
       tagline: product.tagline,
       category: product.category,
-      badge: product.badge || 'Flagship',
+      badge: product.badge || '',
       icon: product.icon || 'Send',
       previewType: product.previewType || 'mail',
       description: product.description || '',
       productUrl: product.productUrl || '',
       features: Array.isArray(product.features) ? product.features.join(', ') : '',
-      activeUsers: product.metrics?.activeUsers || '10K+',
-      deliveryRate: product.metrics?.deliveryRate || '98%',
-      engagement: product.metrics?.engagement || '3x',
+      activeUsers: product.metrics?.activeUsers || '',
+      deliveryRate: product.metrics?.deliveryRate || '',
+      engagement: product.metrics?.engagement || '',
       isFeatured: product.isFeatured || false,
       isPublished: product.isPublished,
       order: product.order || 0,
@@ -393,8 +393,8 @@ export default function AdminProducts({ token }) {
                     </td>
 
                     <td className="py-3.5 px-4 text-[10px] text-slate-500 font-mono">
-                      <div>Users: {p.metrics?.activeUsers || '10K+'}</div>
-                      <div>Delivery: {p.metrics?.deliveryRate || '98%'}</div>
+                      <div>Users: {p.metrics?.activeUsers || '—'}</div>
+                      <div>Delivery: {p.metrics?.deliveryRate || '—'}</div>
                     </td>
 
                     <td className="py-3.5 px-4">

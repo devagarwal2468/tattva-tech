@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { EMAIL_REGEX } from '../utils/security.js';
 
 const contactSchema = new mongoose.Schema(
   {
@@ -14,12 +15,37 @@ const contactSchema = new mongoose.Schema(
       required: [true, 'Email is required'],
       trim: true,
       lowercase: true,
-      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email address'],
+      maxlength: [254, 'Email is too long'],
+      match: [EMAIL_REGEX, 'Please provide a valid email address'],
     },
     company: {
       type: String,
       trim: true,
       maxlength: [120, 'Company name cannot exceed 120 characters'],
+      default: '',
+    },
+    phone: {
+      type: String,
+      trim: true,
+      maxlength: [30, 'Phone number cannot exceed 30 characters'],
+      default: '',
+    },
+    service: {
+      type: String,
+      trim: true,
+      maxlength: [80, 'Service cannot exceed 80 characters'],
+      default: '',
+    },
+    budget: {
+      type: String,
+      trim: true,
+      maxlength: [60, 'Budget cannot exceed 60 characters'],
+      default: '',
+    },
+    source: {
+      type: String,
+      trim: true,
+      maxlength: [120, 'Source cannot exceed 120 characters'],
       default: '',
     },
     message: {

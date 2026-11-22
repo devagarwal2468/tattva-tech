@@ -8,11 +8,12 @@ import {
 } from '../controllers/application.controller.js';
 import { protectAdmin } from '../middleware/auth.js';
 import { uploadResume } from '../utils/fileUpload.js';
+import { applicationLimiter } from '../middleware/rateLimits.js';
 
 const router = express.Router();
 
 // Public: Apply for a job with resume
-router.post('/', uploadResume.single('resume'), submitApplication);
+router.post('/', applicationLimiter, uploadResume.single('resume'), submitApplication);
 
 // Admin routes
 router.get('/admin/all', protectAdmin, getApplicationsAdmin);

@@ -31,7 +31,6 @@ export default function AdminAuthModal({ isOpen, onClose, onAuthSuccess }) {
       localStorage.setItem('tattva_admin_token', res.token);
       localStorage.setItem('tattva_admin_user', JSON.stringify(res.user));
       onAuthSuccess(res.user, res.token);
-      onClose();
     } catch (err) {
       setError(err.message || 'Authentication failed. Please check your admin credentials.');
     } finally {

@@ -1,391 +1,400 @@
-import React, { useEffect, useState } from 'react';
-import {
-  ArrowRight,
-  Sparkles,
-  Zap,
-  Layers,
-  Smartphone,
-  Globe,
-  TrendingUp,
-  Cpu,
-  CheckCircle,
-  ExternalLink,
-  Code2,
-  Users,
-  ShieldCheck,
-  Award,
-  Bot,
-  Palette,
-} from 'lucide-react';
-import CoreEngineeringStack from '../components/CoreEngineeringStack';
-import BrandMarquee from '../components/BrandMarquee';
-import './Home.css';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight, Check, CircleDot } from 'lucide-react';
+import Button from '../components/ui/Button';
+import Reveal from '../components/ui/Reveal';
+import Icon from '../components/ui/Icon';
+import { Section, SectionHeader } from '../components/ui/Section';
+import CtaBand from '../components/sections/CtaBand';
+import FaqList from '../components/sections/FaqList';
+import ProductCard from '../components/cards/ProductCard';
+import ProjectCard from '../components/cards/ProjectCard';
+import { useSeo } from '../lib/seo';
+import { useAsync } from '../lib/useAsync';
+import { fetchPublicProducts, fetchPublicProjects } from '../services/api';
+import { services } from '../content/services';
+import { stats, technologies, processSteps, principles, faqs, engagementModels } from '../content/site';
 
-const heroPhrases = ['Digital Products', 'AI Solutions', 'Robotics Systems', 'SaaS Platforms'];
-
-export default function Home({ setActivePage }) {
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [displayedPhrase, setDisplayedPhrase] = useState(heroPhrases[0]);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
-    () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false,
-  );
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const updateMotionPreference = (event) => setPrefersReducedMotion(event.matches);
-
-    mediaQuery.addEventListener('change', updateMotionPreference);
-    return () => mediaQuery.removeEventListener('change', updateMotionPreference);
-  }, []);
-
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      setDisplayedPhrase(heroPhrases[0]);
-      setIsDeleting(false);
-      setPhraseIndex(0);
-      return undefined;
-    }
-
-    const currentPhrase = heroPhrases[phraseIndex];
-    let delay;
-
-    if (!isDeleting && displayedPhrase === currentPhrase) {
-      delay = window.setTimeout(() => setIsDeleting(true), 1700);
-    } else if (isDeleting && displayedPhrase.length === 0) {
-      delay = window.setTimeout(() => {
-        setPhraseIndex((index) => (index + 1) % heroPhrases.length);
-        setIsDeleting(false);
-      }, 260);
-    } else {
-      delay = window.setTimeout(() => {
-        setDisplayedPhrase((phrase) => (
-          isDeleting ? phrase.slice(0, -1) : currentPhrase.slice(0, phrase.length + 1)
-        ));
-      }, isDeleting ? 38 : 72);
-    }
-
-    return () => window.clearTimeout(delay);
-  }, [displayedPhrase, isDeleting, phraseIndex, prefersReducedMotion]);
-
-  const stats = [
-    { value: '50+', label: 'Projects Delivered', desc: 'Across 12 countries' },
-    { value: '30+', label: 'Happy Clients', desc: 'From startups to enterprise' },
-    { value: '5+', label: 'Products in Development', desc: 'High-growth SaaS tools' },
-    { value: '100%', label: 'Client Satisfaction', desc: 'Transparent & on-time' },
+function HeroVisual() {
+  const stages = [
+    { name: 'Discovery', state: 'done' },
+    { name: 'UX & design', state: 'done' },
+    { name: 'Engineering', state: 'active', pct: 72 },
+    { name: 'Launch', state: 'next' },
   ];
-
-  const heroServices = [
-    { title: 'AI & Automation', detail: 'Smarter Workflows', icon: Zap, color: 'blue' },
-    { title: 'SaaS Products', detail: 'Ready to Scale', icon: Layers, color: 'emerald' },
-    { title: 'Web & Mobile Apps', detail: 'Built for Growth', icon: Smartphone, color: 'cyan' },
-    { title: 'Robotics & IoT', detail: 'Intelligent Systems', icon: Bot, color: 'violet' },
-    { title: 'UI/UX Design', detail: 'Human-Centered', icon: Palette, color: 'indigo' },
-    { title: 'Digital Growth', detail: 'Reach More Customers', icon: TrendingUp, color: 'amber' },
-  ];
-
-  const heroServiceOrbits = [
-    { duration: '30s', services: heroServices.slice(0, 2) },
-    { duration: '38s', services: heroServices.slice(2, 4) },
-    { duration: '46s', services: heroServices.slice(4, 6) },
-  ];
-
-  const partners = [
-    { name: 'AWS', icon: 'aws', label: 'Amazon Web Services' },
-    { name: 'Google Cloud', icon: 'gcp', label: 'Google Cloud Platform' },
-    { name: 'OpenAI', icon: 'openai', label: 'OpenAI' },
-    { name: 'Meta', icon: 'meta', label: 'Meta Developer' },
-    { name: 'Microsoft', icon: 'msft', label: 'Microsoft for Startups' },
-    { name: 'Vercel', icon: 'vercel', label: 'Vercel Cloud' },
-  ];
-
-  const renderPartner = ({ name, icon, label }) => (
-    <div
-      key={name}
-      className="flex shrink-0 items-center gap-2 font-semibold text-slate-800"
-      aria-label={label}
-    >
-      {icon === 'aws' && <span className="text-2xl font-black">aws</span>}
-      {icon === 'gcp' && (
-        <>
-          <span className="h-3 w-3 rounded-full bg-blue-500" />
-          <span className="text-base">Google Cloud</span>
-        </>
-      )}
-      {icon === 'openai' && (
-        <>
-          <Cpu className="h-5 w-5 text-emerald-600" />
-          <span className="text-base">OpenAI</span>
-        </>
-      )}
-      {icon === 'meta' && <span className="text-lg font-black">∞ Meta</span>}
-      {icon === 'msft' && (
-        <>
-          <span className="grid h-4 w-4 grid-cols-2 gap-0.5" aria-hidden="true">
-            <span className="bg-red-500" />
-            <span className="bg-green-500" />
-            <span className="bg-blue-500" />
-            <span className="bg-amber-500" />
-          </span>
-          <span className="text-base">Microsoft</span>
-        </>
-      )}
-      {icon === 'vercel' && (
-        <>
-          <span className="text-sm">▲</span>
-          <span className="text-base">Vercel</span>
-        </>
-      )}
-    </div>
-  );
-
   return (
-    <div className="pt-24 pb-16 overflow-hidden">
-      {/* Background radial glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[650px] bg-gradient-to-b from-blue-100/50 via-sky-50/30 to-transparent -z-10 pointer-events-none blur-3xl"></div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* ================= HERO SECTION ================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center pt-8 pb-16">
-          
-          {/* Left Hero Content */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            {/* Top Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-              <span className="text-xs font-bold tracking-wider text-blue-700 uppercase">
-                Technology Partner for a Smarter Tomorrow
-              </span>
-            </div>
-
-            {/* Headline */}
-            <h1
-              aria-label="We turn ambitious ideas into digital products, AI solutions, robotics systems, and SaaS platforms that matter."
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12]"
-            >
-              We Turn Ambitious Ideas Into{' '}
-              <span className="hero-typewriter" aria-hidden="true">
-                <span className="hero-typewriter-measure">Robotics Systems</span>
-                <span className="hero-typewriter-text">{displayedPhrase}</span>
-                {!prefersReducedMotion && <span className="hero-typewriter-caret" />}
-              </span>{' '}
-              That Matter.
-            </h1>
-
-            {/* Subtext */}
-            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl leading-relaxed">
-              Tattva Tech builds modern software, AI solutions and SaaS products that help businesses grow, automate and scale.
-            </p>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <button
-                onClick={() => setActivePage('contact')}
-                className="group flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-300"
-              >
-                <span>Start a Project</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </button>
-
-              <button
-                onClick={() => setActivePage('products')}
-                className="group flex items-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 font-semibold text-base border border-slate-200/90 shadow-sm hover:shadow transition-all duration-200"
-              >
-                <span>Explore Products</span>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors group-hover:translate-x-1" />
-              </button>
-            </div>
-
-            {/* Trust points micro badge */}
-            <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-500">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-emerald-500" />
-                <span>Modern Tech Stack</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-emerald-500" />
-                <span>Rapid Prototyping</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-emerald-500" />
-                <span>Dedicated Ownership</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Hero Graphic: rotating service orbit around the Tattvaa logo */}
-          <div className="lg:col-span-5 relative flex items-center justify-center">
-            <div
-              className="home-hero-orbit-stage"
-              role="img"
-              aria-label="Tattvaa Tech services orbiting its logo: AI and automation, SaaS products, web and mobile apps, robotics and IoT, UI/UX design, and digital growth"
-            >
-              <div className="home-hero-orbit-glow" aria-hidden="true" />
-              <div className="home-hero-orbit-line" aria-hidden="true" />
-              <img
-                src="/t-logo.png"
-                alt=""
-                className="home-hero-orbit-logo"
-              />
-              <div className="home-hero-orbits" aria-hidden="true">
-                {heroServiceOrbits.map(({ duration, services }, orbitIndex) => (
-                  <div
-                    className={`home-hero-orbit home-hero-orbit-${orbitIndex + 1}`}
-                    key={services[0].title}
-                    style={{ '--orbit-duration': duration }}
-                  >
-                    <div className="home-hero-orbit-rotator">
-                      {services.map(({ title, detail, icon: ServiceIcon, color }, serviceIndex) => (
-                        <div
-                          className={`home-hero-orbit-anchor home-hero-orbit-anchor-${serviceIndex + 1}`}
-                          key={title}
-                        >
-                          <div className="home-hero-orbit-counter">
-                            <div className={`home-hero-service-badge home-hero-service-${color}`}>
-                              <span className="home-hero-service-icon">
-                                <ServiceIcon className="h-4 w-4" />
-                              </span>
-                              <span className="home-hero-service-copy">
-                                <span className="home-hero-service-title">{title}</span>
-                                <span className="home-hero-service-detail">{detail}</span>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
+    <div className="relative mx-auto w-full max-w-[560px] lg:mx-0" aria-hidden="true">
+      <div className="absolute -inset-10 rounded-full bg-brand-600/25 blur-[90px]" />
+      {/* Main window */}
+      <div className="relative rounded-2xl border border-white/10 bg-ink-900/80 p-1.5 shadow-glow backdrop-blur-xl">
+        <div className="flex items-center gap-1.5 px-3 py-2.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+          <span className="ml-3 text-[11px] font-medium text-ink-400">project-roadmap</span>
         </div>
-
-        {/* ================= STATS SECTION ================= */}
-        <div className="mt-8 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-md">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
-            {stats.map((stat, i) => (
-              <div key={i} className={`pt-4 sm:pt-0 ${i !== 0 ? 'sm:pl-6' : ''} text-center sm:text-left`}>
-                <div className="text-3xl sm:text-4xl font-extrabold text-blue-600 tracking-tight mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm font-bold text-slate-900">{stat.label}</div>
-                <div className="text-xs text-slate-500">{stat.desc}</div>
+        <div className="rounded-xl border border-white/5 bg-ink-950/70 p-5 sm:p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400">Delivery</p>
+              <p className="mt-1 font-display text-lg font-semibold text-white">Your product, week by week</p>
+            </div>
+            <span className="rounded-full bg-emerald-400/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-300">On track</span>
+          </div>
+          <ul className="mt-6 space-y-3.5">
+            {stages.map((s) => (
+              <li key={s.name} className="flex items-center gap-3">
+                <span
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
+                    s.state === 'done' ? 'bg-brand-500 text-white' : s.state === 'active' ? 'border border-brand-400 text-brand-300' : 'border border-white/15 text-ink-500'
+                  }`}
+                >
+                  {s.state === 'done' ? <Check className="h-3.5 w-3.5" /> : <CircleDot className="h-3.5 w-3.5" />}
+                </span>
+                <span className={`w-28 text-sm ${s.state === 'next' ? 'text-ink-500' : 'text-ink-200'}`}>{s.name}</span>
+                <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
+                  <span
+                    className="block h-full rounded-full bg-gradient-to-r from-brand-500 to-cyan-400"
+                    style={{ width: s.state === 'done' ? '100%' : s.state === 'active' ? `${s.pct}%` : '0%' }}
+                  />
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6 grid grid-cols-3 gap-3">
+            {[
+              ['Web', 'Globe'],
+              ['AI', 'Sparkles'],
+              ['Robotics', 'Bot'],
+            ].map(([label, icon]) => (
+              <div key={label} className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+                <Icon name={icon} className="h-4 w-4 text-brand-300" />
+                <p className="mt-2 text-xs font-medium text-ink-300">{label}</p>
               </div>
             ))}
           </div>
         </div>
-
-        {/* ================= TRUSTED PARTNERS / ECOSYSTEM ================= */}
-        <div className="mt-14 pt-8 pb-4 text-center">
-          <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase mb-8">
-            Built with Enterprise-Grade Platforms & Leading Technologies
-          </p>
-          <div
-            className="partner-marquee"
-            role="region"
-            aria-label="Technology platforms and tools"
-          >
-            <div className="partner-marquee-track">
-              <div className="partner-marquee-group">
-                {partners.map(renderPartner)}
-              </div>
-              <div className="partner-marquee-group" aria-hidden="true">
-                {partners.map(renderPartner)}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <CoreEngineeringStack />
-
-        {/* ================= QUICK HIGHLIGHTS TEASER ================= */}
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          <div
-            onClick={() => setActivePage('services')}
-            className="group bg-gradient-to-br from-white to-blue-50/50 p-7 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1"
-          >
-            <div className="w-12 h-12 rounded-xl bg-blue-100/80 text-blue-600 flex items-center justify-center mb-5">
-              <Code2 className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
-              End-to-End Engineering
-            </h3>
-            <p className="text-sm text-slate-600 mb-4">
-              Full-cycle architecture, full stack web apps, iOS/Android mobile apps, and enterprise DevOps.
-            </p>
-            <span className="text-xs font-bold text-blue-600 inline-flex items-center gap-1">
-              Explore Services <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-            </span>
-          </div>
-
-          <div
-            onClick={() => setActivePage('products')}
-            className="group bg-gradient-to-br from-white to-cyan-50/50 p-7 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1"
-          >
-            <div className="w-12 h-12 rounded-xl bg-cyan-100/80 text-cyan-600 flex items-center justify-center mb-5">
-              <Zap className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-cyan-600 transition-colors">
-              Intelligent SaaS Tools
-            </h3>
-            <p className="text-sm text-slate-600 mb-4">
-              Proprietary SaaS products like MailPilot, LeadFlow CRM, and AI Agent Hub built for real team growth.
-            </p>
-            <span className="text-xs font-bold text-cyan-600 inline-flex items-center gap-1">
-              View SaaS Products <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-            </span>
-          </div>
-
-          <div
-            onClick={() => setActivePage('about')}
-            className="group bg-gradient-to-br from-white to-indigo-50/50 p-7 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1"
-          >
-            <div className="w-12 h-12 rounded-xl bg-indigo-100/80 text-indigo-600 flex items-center justify-center mb-5">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">
-              Long-Term Partnership
-            </h3>
-            <p className="text-sm text-slate-600 mb-4">
-              We act as an extension of your product team with transparent workflows, continuous support and innovation.
-            </p>
-            <span className="text-xs font-bold text-indigo-600 inline-flex items-center gap-1">
-              About Tattva Tech <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-            </span>
-          </div>
-
-        </div>
-
-        {/* ================= CALLOUT BANNER ================= */}
-        <div className="mt-20 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
-          <div className="relative z-10 max-w-2xl space-y-4">
-            <span className="text-xs font-bold uppercase tracking-widest text-blue-200">
-              Ready to create real impact?
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Have an Ambitious Project in Mind? Let's Build It Together.
-            </h2>
-            <p className="text-sm sm:text-base text-blue-100">
-              Get in touch with our engineering and product leaders for a free strategy session.
-            </p>
-            <div className="pt-2">
-              <button
-                onClick={() => setActivePage('contact')}
-                className="px-6 py-3 rounded-full bg-white text-blue-700 font-bold text-sm shadow hover:bg-blue-50 transition-colors inline-flex items-center gap-2"
-              >
-                <span>Discuss Your Project</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-
       </div>
-      <BrandMarquee />
+
+      {/* Floating: AI assistant */}
+      <div className="absolute -right-3 -top-8 hidden w-56 animate-float rounded-xl border border-white/10 bg-ink-900/90 p-3.5 shadow-2xl backdrop-blur-xl sm:block lg:-right-8">
+        <div className="flex items-center gap-2">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-cyan-400 text-white">
+            <Icon name="Sparkles" className="h-3.5 w-3.5" />
+          </span>
+          <p className="text-xs font-semibold text-white">AI assistant</p>
+        </div>
+        <p className="mt-2.5 text-[11px] leading-relaxed text-ink-300">New enquiry qualified and routed to the sales team.</p>
+      </div>
+
+      {/* Floating: device telemetry */}
+      <div className="absolute -bottom-16 -left-4 hidden w-60 rounded-xl border border-white/10 bg-ink-900/90 p-3.5 shadow-2xl backdrop-blur-xl [animation-delay:1.5s] sm:block lg:-left-10 animate-float">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-semibold text-white">Robot telemetry</p>
+          <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Live
+          </span>
+        </div>
+        <svg viewBox="0 0 200 40" className="mt-2 h-9 w-full">
+          <defs>
+            <linearGradient id="spark" x1="0" x2="1">
+              <stop offset="0" stopColor="#5b86ff" />
+              <stop offset="1" stopColor="#22d3ee" />
+            </linearGradient>
+          </defs>
+          <path d="M0 30 L20 26 L40 28 L60 18 L80 22 L100 12 L120 16 L140 8 L160 14 L180 6 L200 10" fill="none" stroke="url(#spark)" strokeWidth="2.5" strokeLinecap="round" />
+        </svg>
+      </div>
     </div>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="dark-surface relative overflow-hidden bg-ink-950 pb-24 pt-32 sm:pb-32 sm:pt-40">
+      <div className="bg-grid mask-fade-b pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div className="pointer-events-none absolute -top-48 left-1/2 h-[620px] w-[1100px] -translate-x-1/2 rounded-full bg-brand-600/20 blur-[130px]" aria-hidden="true" />
+      <div className="container-site relative grid items-center gap-16 lg:grid-cols-[1.08fr_1fr] lg:gap-12">
+        <div className="animate-fade-up">
+          <Link
+            to="/services/robotics-iot"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1 pl-1 pr-3 text-sm text-ink-300 backdrop-blur transition hover:border-white/25"
+          >
+            <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-semibold text-white">New</span>
+            Custom robotics &amp; IoT for education and industry
+            <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" aria-hidden="true" />
+          </Link>
+          <h1 className="h-display mt-7 text-white">
+            We turn ambitious ideas into <span className="text-gradient">products that matter.</span>
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-300 sm:text-xl">
+            Tattva Tech designs, builds and scales web platforms, mobile apps, AI automation, SaaS products and custom robotics — for startups, businesses and institutions.
+          </p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <Button to="/contact" size="lg" arrow>Start a project</Button>
+            <Button to="/services" size="lg" variant="ghostDark">Explore services</Button>
+          </div>
+          <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-400">
+            {['Free initial consultation', 'Weekly demos', 'Support after launch'].map((t) => (
+              <li key={t} className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-brand-400" aria-hidden="true" /> {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="animate-fade-up [animation-delay:150ms]">
+          <HeroVisual />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TechStrip() {
+  const row = [...technologies, ...technologies];
+  return (
+    <section className="border-b border-ink-100 bg-white py-10" aria-label="Technologies we work with">
+      <div className="container-site">
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-ink-400">Technologies we build with</p>
+        <div className="mask-fade-x mt-7 overflow-hidden">
+          <ul className="flex w-max animate-marquee gap-12 hover:[animation-play-state:paused]">
+            {row.map((t, i) => (
+              <li key={`${t}-${i}`} aria-hidden={i >= technologies.length ? 'true' : undefined} className="whitespace-nowrap font-display text-lg font-semibold text-ink-300">
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ServicesGrid() {
+  return (
+    <Section>
+      <SectionHeader
+        eyebrow="What we do"
+        title="One partner for software, AI, robotics and growth."
+        lead="Engineering, design and marketing under one roof — so your product moves from idea to impact without hand-offs between agencies."
+        action={<Button to="/services" variant="secondary" arrow>All services</Button>}
+      />
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {services.map((s, i) => (
+          <Reveal key={s.slug} delay={(i % 3) * 80} className={i === 0 ? 'sm:col-span-2 lg:col-span-1 lg:row-span-2' : ''}>
+            <Link
+              to={`/services/${s.slug}`}
+              className={`card-interactive group flex h-full flex-col p-7 ${i === 0 ? 'dark-surface relative overflow-hidden border-ink-900 bg-ink-950 lg:p-9' : ''}`}
+            >
+              {i === 0 && <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-brand-600/40 blur-[80px]" aria-hidden="true" />}
+              <span className={`relative flex h-12 w-12 items-center justify-center rounded-xl ${i === 0 ? 'bg-white/10 text-brand-200' : 'bg-brand-50 text-brand-600'}`}>
+                <Icon name={s.icon} className="h-6 w-6" />
+              </span>
+              <h3 className={`relative mt-6 font-display text-xl font-semibold ${i === 0 ? 'text-white lg:text-2xl' : 'text-ink-900'}`}>{s.title}</h3>
+              <p className={`relative mt-2.5 leading-relaxed ${i === 0 ? 'text-ink-300' : 'text-ink-500'}`}>{s.short}</p>
+              {i === 0 && (
+                <ul className="relative mt-6 space-y-2.5">
+                  {s.deliverables.slice(0, 4).map((d) => (
+                    <li key={d} className="flex items-start gap-2 text-sm text-ink-300">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-300" aria-hidden="true" /> {d}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <span className={`relative mt-auto inline-flex items-center gap-1.5 pt-7 text-sm font-semibold ${i === 0 ? 'text-white' : 'text-brand-600'}`}>
+                Learn more <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
+              </span>
+            </Link>
+          </Reveal>
+        ))}
+        <Reveal delay={160}>
+          <Link to="/contact" className="group flex h-full flex-col justify-between rounded-2xl border border-dashed border-brand-200 bg-brand-50/50 p-7 transition hover:border-brand-400 hover:bg-brand-50">
+            <div>
+              <h3 className="font-display text-xl font-semibold text-ink-900">Not sure what you need?</h3>
+              <p className="mt-2.5 leading-relaxed text-ink-500">Tell us the problem. We’ll recommend the right mix of technology, team and budget.</p>
+            </div>
+            <span className="mt-7 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600">
+              Book a free consultation <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
+            </span>
+          </Link>
+        </Reveal>
+      </div>
+    </Section>
+  );
+}
+
+function WhyUs() {
+  return (
+    <Section dark className="relative overflow-hidden">
+      <div className="pointer-events-none absolute right-0 top-0 h-[480px] w-[480px] rounded-full bg-brand-600/15 blur-[120px]" aria-hidden="true" />
+      <div className="relative grid gap-16 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
+        <Reveal>
+          <p className="eyebrow eyebrow-dark mb-4">Why Tattva Tech</p>
+          <h2 className="h-section text-white">A long-term technology partner, not just a vendor.</h2>
+          <p className="mt-6 text-lg leading-relaxed text-ink-300">
+            We collaborate with startups, businesses, agencies and institutions through project-based work, white-label delivery, dedicated teams and long-term partnerships.
+          </p>
+          <dl className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10">
+            {stats.map((s) => (
+              <div key={s.label} className="border-l border-white/10 pl-5">
+                <dt className="text-sm text-ink-400">{s.label}</dt>
+                <dd className="mt-1 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">{s.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </Reveal>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {principles.map((p, i) => (
+            <Reveal key={p.title} delay={i * 80} className="rounded-2xl border border-white/10 bg-white/[0.03] p-7 transition hover:border-white/20 hover:bg-white/[0.05]">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300">
+                <Icon name={p.icon} className="h-5 w-5" />
+              </span>
+              <h3 className="mt-5 font-display text-lg font-semibold text-white">{p.title}</h3>
+              <p className="mt-2 leading-relaxed text-ink-400">{p.desc}</p>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+function Process() {
+  return (
+    <Section>
+      <SectionHeader
+        align="center"
+        eyebrow="How we work"
+        title="A clear process from first call to launch."
+        lead="Short feedback loops, visible progress and no surprises — whether it is a website, an AI system or a robot."
+      />
+      <ol className="relative grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="pointer-events-none absolute left-0 right-0 top-7 hidden h-px bg-gradient-to-r from-transparent via-brand-200 to-transparent lg:block" aria-hidden="true" />
+        {processSteps.map((step, i) => (
+          <Reveal as="li" key={step.title} delay={i * 90} className="relative">
+            <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-100 bg-white font-display text-lg font-bold text-brand-600 shadow-card">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 className="mt-6 font-display text-xl font-semibold">{step.title}</h3>
+            <p className="mt-2.5 leading-relaxed text-ink-500">{step.desc}</p>
+          </Reveal>
+        ))}
+      </ol>
+    </Section>
+  );
+}
+
+function ProductsPreview() {
+  const { data: products, loading } = useAsync(() => fetchPublicProducts(), [], []);
+  if (!loading && (!products || products.length === 0)) return null;
+  const list = (products || []).slice(0, 3);
+  return (
+    <Section className="bg-ink-50/60">
+      <SectionHeader
+        eyebrow="Our products"
+        title="Building our own products, too."
+        lead="In-house SaaS products built with the same engineering standards we bring to client work."
+        action={<Button to="/products" variant="secondary" arrow>All products</Button>}
+      />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {loading
+          ? [0, 1, 2].map((k) => <div key={k} className="card h-[420px] animate-pulse bg-ink-50" />)
+          : list.map((p, i) => (
+              <Reveal key={p._id || p.name} delay={i * 80}>
+                <ProductCard product={p} />
+              </Reveal>
+            ))}
+      </div>
+    </Section>
+  );
+}
+
+function WorkPreview() {
+  const { data: projects, loading } = useAsync(() => fetchPublicProjects(), [], []);
+  if (loading || !projects || projects.length === 0) return null;
+  return (
+    <Section>
+      <SectionHeader
+        eyebrow="Selected work"
+        title="Real solutions, shipped."
+        action={<Button to="/work" variant="secondary" arrow>View all work</Button>}
+      />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {projects.slice(0, 3).map((p, i) => (
+          <Reveal key={p._id || p.title} delay={i * 80}>
+            <ProjectCard project={p} />
+          </Reveal>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+function Engagement() {
+  return (
+    <Section className="border-t border-ink-100">
+      <div className="grid gap-14 lg:grid-cols-[1fr_1.4fr]">
+        <Reveal>
+          <p className="eyebrow mb-4">Ways to work with us</p>
+          <h2 className="h-section">Flexible engagement models.</h2>
+          <p className="mt-5 text-lg leading-relaxed text-ink-500">
+            Choose what fits your stage and budget. We work with clients across India and internationally, on-site or remote.
+          </p>
+          <Button to="/contact" className="mt-8" arrow>Discuss your project</Button>
+        </Reveal>
+        <div className="grid gap-px overflow-hidden rounded-2xl border border-ink-100 bg-ink-100 sm:grid-cols-2">
+          {engagementModels.map((m, i) => (
+            <Reveal key={m.title} delay={i * 70} className="bg-white p-7">
+              <h3 className="font-display text-lg font-semibold">{m.title}</h3>
+              <p className="mt-2 leading-relaxed text-ink-500">{m.desc}</p>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+function Faq() {
+  return (
+    <Section id="faq" className="bg-ink-50/60">
+      <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
+        <Reveal>
+          <p className="eyebrow mb-4">FAQ</p>
+          <h2 className="h-section">Questions, answered.</h2>
+          <p className="mt-5 text-lg leading-relaxed text-ink-500">Can’t find what you are looking for?</p>
+          <Link to="/contact" className="mt-3 inline-flex items-center gap-1.5 font-semibold text-brand-600 hover:text-brand-700">
+            Talk to our team <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </Reveal>
+        <Reveal delay={100}>
+          <FaqList items={faqs} />
+        </Reveal>
+      </div>
+    </Section>
+  );
+}
+
+export default function Home() {
+  useSeo({
+    description:
+      'Tattva Tech designs and builds web platforms, mobile apps, AI automation, SaaS products and custom robotics for startups, businesses and institutions. Offices in Gurugram, Gwalior and Saharanpur.',
+    path: '/',
+  });
+  return (
+    <>
+      <Hero />
+      <TechStrip />
+      <ServicesGrid />
+      <WhyUs />
+      <Process />
+      <ProductsPreview />
+      <WorkPreview />
+      <Engagement />
+      <Faq />
+      <div className="pt-20 sm:pt-28">
+        <CtaBand />
+      </div>
+    </>
   );
 }

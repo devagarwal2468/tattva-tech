@@ -1,27 +1,82 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { getJwtSecret, isValidEmail } from '../utils/security.js';
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'tattva_tech_ultra_secure_jwt_secret_key_2026', {
-    expiresIn: '7d',
-  });
+export const MIN_PASSWORD_LENGTH = 8;
+
+const generateToken = (id) => jwt.sign({ id }, getJwtSecret(), { expiresIn: '7d' });
+
+const publicUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+});
+
+/**
+ * Optional first-run bootstrap: if ADMIN_EMAIL + ADMIN_PASSWORD are configured
+ * and no admin exists yet, create that admin. Runs at most once per process.
+ */
+let bootstrapChecked = false;
+export const bootstrapAdminFromEnv = async () => {
+  if (bootstrapChecked) return;
+  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const password = process.env.ADMIN_PASSWORD;
+  if (!email || !password) {
+    bootstrapChecked = true;
+    return;
+  }
+  if (password.length < MIN_PASSWORD_LENGTH || !isValidEmail(email)) {
+    console.error('[Admin Bootstrap]: ADMIN_EMAIL/ADMIN_PASSWORD invalid (password must be 8+ chars). Skipping.');
+    bootstrapChecked = true;
+    return;
+  }
+  const count = await User.countDocuments();
+  if (count === 0) {
+    await User.create({ name: process.env.ADMIN_NAME || 'Tattva Tech Admin', email, password, role: 'superadmin' });
+    console.log(`[Admin Bootstrap]: Created initial admin ${email}`);
+  }
+  bootstrapChecked = true;
 };
 
 // @desc    Register a new admin
 // @route   POST /api/auth/register
-// @access  Public
+// @access  Only when no admin exists yet, or with a valid ADMIN_INVITE_CODE
 export const registerAdmin = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, inviteCode } = req.body;
 
-    if (!name || !email || !password) {
+    const userCount = await User.countDocuments();
+    const expectedInvite = (process.env.ADMIN_INVITE_CODE || '').trim();
+    const inviteOk = Boolean(expectedInvite) && typeof inviteCode === 'string' && inviteCode.trim() === expectedInvite;
+
+    if (userCount > 0 && !inviteOk) {
+      return res.status(403).json({
+        success: false,
+        message: 'Admin registration is closed. Ask an existing administrator for an invite code.',
+      });
+    }
+
+    if (typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string' || !name.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Please provide name, email, and password.',
       });
     }
 
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid email address.' });
+    }
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({
+        success: false,
+        message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -30,10 +85,10 @@ export const registerAdmin = async (req, res, next) => {
     }
 
     const user = await User.create({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
+      name: name.trim().slice(0, 100),
+      email: normalizedEmail,
       password,
-      role: 'admin',
+      role: userCount === 0 ? 'superadmin' : 'admin',
     });
 
     const token = generateToken(user._id);
@@ -42,12 +97,7 @@ export const registerAdmin = async (req, res, next) => {
       success: true,
       message: 'Admin account created successfully.',
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      user: publicUser(user),
     });
   } catch (error) {
     next(error);
@@ -61,48 +111,19 @@ export const loginAdmin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    if (typeof email !== 'string' || typeof password !== 'string' || !email.trim() || !password) {
       return res.status(400).json({
         success: false,
         message: 'Please provide email and password.',
       });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
-    let user = await User.findOne({ email: normalizedEmail });
+    await bootstrapAdminFromEnv();
 
-    // Also check alternate spelling if not found
-    if (!user) {
-      if (normalizedEmail === 'admin@tattvaatech.com') {
-        user = await User.findOne({ email: 'admin@tattvatech.com' });
-      } else if (normalizedEmail === 'admin@tattvatech.com') {
-        user = await User.findOne({ email: 'admin@tattvaatech.com' });
-      }
-    }
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    const isMatch = user ? await user.matchPassword(password) : false;
 
-    // Seed default admin if user tries logging in with default credentials and DB is empty
-    const isDefaultCredentials =
-      (normalizedEmail === 'admin@tattvaatech.com' || normalizedEmail === 'admin@tattvatech.com') &&
-      password === 'admin123';
-
-    if (!user && isDefaultCredentials) {
-      user = await User.create({
-        name: 'Tattvaa Administrator',
-        email: normalizedEmail,
-        password: 'admin123',
-        role: 'admin',
-      });
-    }
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid email or password.',
-      });
-    }
-
-    const isMatch = await user.matchPassword(password);
-    if (!isMatch) {
+    if (!user || !isMatch) {
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password.',
@@ -115,12 +136,7 @@ export const loginAdmin = async (req, res, next) => {
       success: true,
       message: 'Login successful.',
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      user: publicUser(user),
     });
   } catch (error) {
     next(error);
@@ -130,12 +146,7 @@ export const loginAdmin = async (req, res, next) => {
 // @desc    Get current logged in admin
 // @route   GET /api/auth/me
 // @access  Private
-export const getMe = async (req, res) => {
-  return res.status(200).json({
-    success: true,
-    user: req.user,
-  });
-};
+export const getMe = async (req, res) => res.status(200).json({ success: true, user: req.user });
 
 // @desc    Change the current admin password
 // @route   POST /api/auth/change-password
@@ -151,10 +162,10 @@ export const changeAdminPassword = async (req, res, next) => {
       });
     }
 
-    if (newPassword.length < 6) {
+    if (newPassword.length < MIN_PASSWORD_LENGTH) {
       return res.status(400).json({
         success: false,
-        message: 'New password must be at least 6 characters.',
+        message: `New password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
       });
     }
 
@@ -167,27 +178,18 @@ export const changeAdminPassword = async (req, res, next) => {
 
     const user = await User.findById(req.user.id);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'Admin account not found.',
-      });
+      return res.status(404).json({ success: false, message: 'Admin account not found.' });
     }
 
     const isCurrentPasswordValid = await user.matchPassword(currentPassword);
     if (!isCurrentPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: 'Current password is incorrect.',
-      });
+      return res.status(401).json({ success: false, message: 'Current password is incorrect.' });
     }
 
     user.password = newPassword;
     await user.save();
 
-    return res.status(200).json({
-      success: true,
-      message: 'Password changed successfully.',
-    });
+    return res.status(200).json({ success: true, message: 'Password changed successfully.' });
   } catch (error) {
     next(error);
   }

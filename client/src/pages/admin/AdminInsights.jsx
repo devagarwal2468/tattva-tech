@@ -46,7 +46,7 @@ export default function AdminInsights({ token }) {
   const [formData, setFormData] = useState({
     title: '',
     tag: 'AI & Automation',
-    author: 'Tattvaa Tech Research Team',
+    author: 'Tattva Tech Research Team',
     readTime: '5 min read',
     date: '',
     summary: '',
@@ -97,7 +97,7 @@ export default function AdminInsights({ token }) {
         year: 'numeric',
       }),
       summary: '',
-      content: `### 1. Executive Summary\nDescribe the challenge and technological context.\n\n### 2. Strategy & Implementation\nDetail how Tattvaa Tech built and orchestrated the solution.\n\n### 3. Business Results & Impact\nKey performance indicators and operational gains achieved.`,
+      content: `### 1. Executive Summary\nDescribe the challenge and technological context.\n\n### 2. Strategy & Implementation\nDetail how Tattva Tech built and orchestrated the solution.\n\n### 3. Business Results & Impact\nKey performance indicators and operational gains achieved.`,
       previewVisual: 'robot',
       clientName: '',
       isFeatured: false,
@@ -113,7 +113,7 @@ export default function AdminInsights({ token }) {
     setFormData({
       title: item.title,
       tag: item.tag,
-      author: item.author || 'Tattvaa Tech Team',
+      author: item.author || 'Tattva Tech Team',
       readTime: item.readTime || '5 min read',
       date: item.date || '',
       summary: item.summary,

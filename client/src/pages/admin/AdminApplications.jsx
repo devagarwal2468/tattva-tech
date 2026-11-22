@@ -356,7 +356,7 @@ export default function AdminApplications({ token }) {
               </button>
 
               <a
-                href={`mailto:${selectedApp.email}?subject=Interview Invitation from Tattvaa Tech regarding ${selectedApp.jobTitle}`}
+                href={`mailto:${selectedApp.email}?subject=Interview Invitation from Tattva Tech regarding ${selectedApp.jobTitle}`}
                 className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold shadow hover:bg-blue-700 flex items-center gap-1.5"
               >
                 <Mail className="w-3.5 h-3.5" />

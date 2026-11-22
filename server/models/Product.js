@@ -23,7 +23,7 @@ const productSchema = new mongoose.Schema(
     },
     badge: {
       type: String,
-      default: 'Flagship',
+      default: '',
     },
     icon: {
       type: String,
@@ -48,9 +48,9 @@ const productSchema = new mongoose.Schema(
       default: [],
     },
     metrics: {
-      activeUsers: { type: String, default: '10K+' },
-      deliveryRate: { type: String, default: '98%' },
-      engagement: { type: String, default: '3x' },
+      activeUsers: { type: String, default: '' },
+      deliveryRate: { type: String, default: '' },
+      engagement: { type: String, default: '' },
     },
     isFeatured: {
       type: Boolean,

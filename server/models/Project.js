@@ -42,7 +42,7 @@ const projectSchema = new mongoose.Schema(
     },
     impactMetric: {
       type: String,
-      default: 'High Impact',
+      default: '',
     },
     isPublished: {
       type: Boolean,

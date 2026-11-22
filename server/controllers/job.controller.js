@@ -1,105 +1,14 @@
 import Job from '../models/Job.js';
-import mongoose from 'mongoose';
+import { buildSearchRegex } from '../utils/security.js';
 
-const initialJobs = [
-  {
-    title: 'Senior Full-Stack Engineer (MERN / Next.js)',
-    department: 'Engineering',
-    employmentType: 'Full-Time',
-    location: 'Remote (India / Global)',
-    salary: '₹22L - ₹35L / yr',
-    description:
-      'Architect and ship high-scale React, Node.js, and MongoDB/PostgreSQL SaaS systems with high performance and test coverage.',
-    requirements: [
-      'Expertise in modern React, TypeScript, Node.js and Express',
-      'Demonstrated experience with MongoDB, Redis, and schema design',
-      'Strong sense of UI polish and API contract reliability',
-    ],
-    responsibilities: [
-      'Lead architecture and engineering of high-throughput web portals',
-      'Collaborate with product designers to implement responsive, accessible UIs',
-      'Mentor junior engineers and conduct rigorous code reviews',
-    ],
-    status: 'Published',
-  },
-  {
-    title: 'AI / Machine Learning Engineer',
-    department: 'AI & Research',
-    employmentType: 'Full-Time',
-    location: 'Remote / Bengaluru Hub',
-    salary: '₹25L - ₹40L / yr',
-    description:
-      'Design, evaluate, and deploy autonomous LLM agents, RAG knowledge retrieval systems, and vector embedding pipelines.',
-    requirements: [
-      'Hands-on experience with OpenAI APIs, LangChain, or LlamaIndex',
-      'Python proficiency with FastAPI and asynchronous event workers',
-      'Familiarity with Pinecone, Milvus, or pgvector architectures',
-    ],
-    responsibilities: [
-      'Build scalable RAG retrieval pipelines with real-time vector search',
-      'Fine-tune open-weight models for specialized enterprise workflows',
-      'Optimize latency and token costs across multi-agent systems',
-    ],
-    status: 'Published',
-  },
-  {
-    title: 'Senior Product Designer (UI/UX)',
-    department: 'Design',
-    employmentType: 'Full-Time',
-    location: 'Remote',
-    salary: '₹18L - ₹28L / yr',
-    description:
-      'Create world-class interfaces, interactive Figma prototypes, and cohesive design tokens for our in-house products and client systems.',
-    requirements: [
-      'Stunning portfolio demonstrating clean SaaS and mobile app UX',
-      'Mastery of Figma component architecture and auto-layout',
-      'Experience conducting user interviews and usability audits',
-    ],
-    responsibilities: [
-      'Design comprehensive Figma design systems and reusable token libraries',
-      'Work side-by-side with frontend engineers to ensure pixel-perfect delivery',
-      'Prototype animations and micro-interactions',
-    ],
-    status: 'Published',
-  },
-  {
-    title: 'Cloud DevOps & Site Reliability Engineer',
-    department: 'Infrastructure',
-    employmentType: 'Full-Time',
-    location: 'Remote',
-    salary: '₹20L - ₹32L / yr',
-    description:
-      'Maintain rock-solid 99.99% uptime, automate Kubernetes clusters, configure CI/CD pipelines, and secure cloud environments.',
-    requirements: [
-      'Proficiency in AWS or GCP cloud orchestration and Terraform',
-      'Docker containerization and automated GitHub Actions workflows',
-      'Monitoring expertise with Prometheus, Grafana, and Datadog',
-    ],
-    responsibilities: [
-      'Manage multi-region AWS cloud deployments and auto-scaling groups',
-      'Design zero-downtime CI/CD deployment pipelines',
-      'Implement automated backup and disaster recovery playbooks',
-    ],
-    status: 'Published',
-  },
-];
-
-const seedJobsIfEmpty = async () => {
-  if (mongoose.connection.readyState === 1) {
-    const count = await Job.countDocuments();
-    if (count === 0) {
-      await Job.insertMany(initialJobs);
-      console.log('[Database Seeded]: Initial job vacancies inserted.');
-    }
-  }
-};
+// Jobs are created by admins in the dashboard. No demo vacancies are auto-seeded,
+// so the public Careers page never shows roles that don't exist.
 
 // @desc    Get published jobs for public Careers page
 // @route   GET /api/jobs
 // @access  Public
 export const getPublicJobs = async (req, res, next) => {
   try {
-    await seedJobsIfEmpty();
     const jobs = await Job.find({ status: 'Published' }).sort({ createdAt: -1 });
     return res.status(200).json({
       success: true,
@@ -117,14 +26,13 @@ export const getPublicJobs = async (req, res, next) => {
 export const getAllJobsAdmin = async (req, res, next) => {
   try {
     const { status, search } = req.query;
-    await seedJobsIfEmpty();
 
     const query = {};
     if (status && status !== 'All') {
       query.status = status;
     }
-    if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), 'i');
+    const regex = buildSearchRegex(search);
+    if (regex) {
       query.$or = [{ title: regex }, { department: regex }, { location: regex }];
     }
 

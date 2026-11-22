@@ -1,12 +1,10 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { getJwtSecret } from '../utils/security.js';
 
 export const protectAdmin = async (req, res, next) => {
-  let token = null;
-
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-  }
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : null;
 
   if (!token) {
     return res.status(401).json({
@@ -15,8 +13,15 @@ export const protectAdmin = async (req, res, next) => {
     });
   }
 
+  let secret;
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'tattva_tech_ultra_secure_jwt_secret_key_2026');
+    secret = getJwtSecret();
+  } catch (configError) {
+    return next(configError);
+  }
+
+  try {
+    const decoded = jwt.verify(token, secret);
     const user = await User.findById(decoded.id).select('-password');
 
     if (!user) {
@@ -27,7 +32,7 @@ export const protectAdmin = async (req, res, next) => {
     }
 
     req.user = user;
-    next();
+    return next();
   } catch (error) {
     return res.status(401).json({
       success: false,

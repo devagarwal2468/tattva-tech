@@ -1,16 +1,29 @@
 import Contact from '../models/Contact.js';
-import mongoose from 'mongoose';
-import { sendEnquiryNotificationToCompanyHead } from '../utils/emailService.js';
+import {
+  sendEnquiryNotificationToCompanyHead,
+  sendEnquiryAcknowledgement,
+} from '../utils/emailService.js';
+import { buildSearchRegex, isValidEmail } from '../utils/security.js';
 
-// In-memory fallback
-const inMemoryContacts = [];
+const VALID_STATUSES = ['New', 'Contacted', 'In Discussion', 'Converted', 'Closed'];
+const str = (value) => (typeof value === 'string' ? value.trim() : '');
 
 // @desc    Submit a new contact enquiry (Public Form)
 // @route   POST /api/contact
 // @access  Public
 export const submitContact = async (req, res, next) => {
   try {
-    const { name, email, company, message } = req.body;
+    const name = str(req.body.name);
+    const email = str(req.body.email).toLowerCase();
+    const message = str(req.body.message);
+
+    // Honeypot: real users never fill the hidden "website" field. Pretend success, store nothing.
+    if (str(req.body.website)) {
+      return res.status(201).json({
+        success: true,
+        message: 'Thank you! Your message has been received. Our team will get back to you shortly.',
+      });
+    }
 
     if (!name || !email || !message) {
       return res.status(400).json({
@@ -19,115 +32,78 @@ export const submitContact = async (req, res, next) => {
       });
     }
 
-    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    if (!emailRegex.test(email)) {
+    if (!isValidEmail(email)) {
       return res.status(400).json({
         success: false,
         message: 'Please provide a valid email address.',
       });
     }
 
-    let savedContact = null;
-    const isDbConnected = mongoose.connection.readyState === 1;
-
-    if (isDbConnected) {
-      savedContact = await Contact.create({
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        company: company ? company.trim() : '',
-        message: message.trim(),
-        status: 'New',
-      });
-    } else {
-      savedContact = {
-        _id: 'mem_' + Date.now(),
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        company: company ? company.trim() : '',
-        message: message.trim(),
-        status: 'New',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      inMemoryContacts.unshift(savedContact);
-    }
-
-    // Dispatch email notification to company head in the background (fire-and-forget safely)
-    sendEnquiryNotificationToCompanyHead({
-      name: savedContact.name,
-      email: savedContact.email,
-      company: savedContact.company,
-      message: savedContact.message,
-      submissionDate: savedContact.createdAt,
-    }).catch((err) => {
-      console.warn('[Notice]: Background email task encountered error:', err.message);
+    const savedContact = await Contact.create({
+      name,
+      email,
+      company: str(req.body.company),
+      phone: str(req.body.phone),
+      service: str(req.body.service),
+      budget: str(req.body.budget),
+      source: str(req.body.source),
+      message,
+      status: 'New',
     });
+
+    // Awaited (with internal timeouts) so serverless functions don't freeze before sending.
+    // Email failures never fail the request — the lead is already stored.
+    await Promise.allSettled([
+      sendEnquiryNotificationToCompanyHead({
+        name: savedContact.name,
+        email: savedContact.email,
+        company: savedContact.company,
+        phone: savedContact.phone,
+        service: savedContact.service,
+        budget: savedContact.budget,
+        source: savedContact.source,
+        message: savedContact.message,
+        submissionDate: savedContact.createdAt,
+      }),
+      sendEnquiryAcknowledgement({ name: savedContact.name, email: savedContact.email }),
+    ]);
 
     return res.status(201).json({
       success: true,
       message: 'Thank you! Your message has been received. Our team will get back to you shortly.',
-      data: savedContact,
-      source: isDbConnected ? 'mongodb' : 'memory_fallback',
+      data: {
+        _id: savedContact._id,
+        name: savedContact.name,
+        createdAt: savedContact.createdAt,
+      },
     });
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      const messages = Object.values(error.errors).map((val) => val.message);
-      return res.status(400).json({
-        success: false,
-        message: messages.join(', '),
-      });
-    }
     next(error);
   }
 };
 
 // @desc    Get all enquiries with search and filter
 // @route   GET /api/contact
-// @access  Public / Admin
+// @access  Private (Admin)
 export const getContacts = async (req, res, next) => {
   try {
     const { status, search } = req.query;
-    const isDbConnected = mongoose.connection.readyState === 1;
-
-    if (isDbConnected) {
-      const query = {};
-      if (status && status !== 'All') {
-        query.status = status;
-      }
-      if (search && search.trim()) {
-        const regex = new RegExp(search.trim(), 'i');
-        query.$or = [{ name: regex }, { email: regex }, { company: regex }, { message: regex }];
-      }
-
-      const contacts = await Contact.find(query).sort({ createdAt: -1 });
-      return res.status(200).json({
-        success: true,
-        count: contacts.length,
-        data: contacts,
-        source: 'mongodb',
-      });
-    } else {
-      let filtered = [...inMemoryContacts];
-      if (status && status !== 'All') {
-        filtered = filtered.filter((c) => c.status === status);
-      }
-      if (search && search.trim()) {
-        const s = search.toLowerCase();
-        filtered = filtered.filter(
-          (c) =>
-            c.name.toLowerCase().includes(s) ||
-            c.email.toLowerCase().includes(s) ||
-            (c.company && c.company.toLowerCase().includes(s)) ||
-            c.message.toLowerCase().includes(s)
-        );
-      }
-      return res.status(200).json({
-        success: true,
-        count: filtered.length,
-        data: filtered,
-        source: 'memory_fallback',
-      });
+    const query = {};
+    if (typeof status === 'string' && status !== 'All') {
+      query.status = status;
     }
+    const regex = buildSearchRegex(search);
+    if (regex) {
+      query.$or = [{ name: regex }, { email: regex }, { company: regex }, { message: regex }, { phone: regex }];
+    }
+
+    const contacts = await Contact.find(query).sort({ createdAt: -1 });
+    return res.status(200).json({
+      success: true,
+      count: contacts.length,
+      data: contacts,
+      source: 'mongodb',
+    });
   } catch (error) {
     next(error);
   }
@@ -141,35 +117,21 @@ export const updateContactStatus = async (req, res, next) => {
     const { id } = req.params;
     const { status, notes } = req.body;
 
-    const validStatuses = ['New', 'Contacted', 'In Discussion', 'Converted', 'Closed'];
-    if (status && !validStatuses.includes(status)) {
+    if (status && !VALID_STATUSES.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: `Invalid status. Allowed values: ${validStatuses.join(', ')}`,
+        message: `Invalid status. Allowed values: ${VALID_STATUSES.join(', ')}`,
       });
     }
 
-    const isDbConnected = mongoose.connection.readyState === 1;
-    if (isDbConnected && mongoose.isValidObjectId(id)) {
-      const updateData = {};
-      if (status) updateData.status = status;
-      if (notes !== undefined) updateData.notes = notes;
+    const updateData = {};
+    if (status) updateData.status = status;
+    if (notes !== undefined) updateData.notes = String(notes).slice(0, 5000);
 
-      const contact = await Contact.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
-      if (!contact) {
-        return res.status(404).json({ success: false, message: 'Enquiry not found.' });
-      }
-      return res.status(200).json({ success: true, message: 'Status updated successfully.', data: contact });
-    }
-
-    const contact = inMemoryContacts.find((c) => c._id === id);
+    const contact = await Contact.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
     if (!contact) {
       return res.status(404).json({ success: false, message: 'Enquiry not found.' });
     }
-    if (status) contact.status = status;
-    if (notes !== undefined) contact.notes = notes;
-    contact.updatedAt = new Date().toISOString();
-
     return res.status(200).json({ success: true, message: 'Status updated successfully.', data: contact });
   } catch (error) {
     next(error);
@@ -181,22 +143,10 @@ export const updateContactStatus = async (req, res, next) => {
 // @access  Private (Admin)
 export const deleteContact = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const isDbConnected = mongoose.connection.readyState === 1;
-
-    if (isDbConnected && mongoose.isValidObjectId(id)) {
-      const deleted = await Contact.findByIdAndDelete(id);
-      if (!deleted) {
-        return res.status(404).json({ success: false, message: 'Enquiry not found.' });
-      }
-      return res.status(200).json({ success: true, message: 'Enquiry deleted successfully.' });
-    }
-
-    const index = inMemoryContacts.findIndex((c) => c._id === id);
-    if (index === -1) {
+    const deleted = await Contact.findByIdAndDelete(req.params.id);
+    if (!deleted) {
       return res.status(404).json({ success: false, message: 'Enquiry not found.' });
     }
-    inMemoryContacts.splice(index, 1);
     return res.status(200).json({ success: true, message: 'Enquiry deleted successfully.' });
   } catch (error) {
     next(error);

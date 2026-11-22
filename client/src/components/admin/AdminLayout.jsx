@@ -54,7 +54,7 @@ export default function AdminLayout({
           {/* Logo & Brand */}
           <div className="p-6 border-b border-slate-800 flex items-center gap-3">
             <div className="w-9 h-9 flex items-center justify-center">
-              <img src="/t-logo.png" alt="Tattvaa Tech Logo" className="w-9 h-9 object-contain" />
+              <img src="/logo-mark.png" alt="Tattva Tech Logo" className="w-9 h-9 object-contain" />
             </div>
             <div>
               <div className="text-base font-black text-white tracking-wide">TATTVA ADMIN</div>
@@ -133,7 +133,7 @@ export default function AdminLayout({
       <div className="md:hidden bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800 sticky top-0 z-40">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 flex items-center justify-center">
-            <img src="/t-logo.png" alt="Tattva Tech" className="w-8 h-8 object-contain" />
+            <img src="/logo-mark.png" alt="Tattva Tech" className="w-8 h-8 object-contain" />
           </div>
           <span className="font-extrabold text-sm tracking-wide">TATTVA ADMIN</span>
         </div>

@@ -1,12 +1,14 @@
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
 import Application from '../models/Application.js';
 import Job from '../models/Job.js';
 import {
   sendApplicationNotificationToHR,
   sendApplicationConfirmationToCandidate,
 } from '../utils/emailService.js';
+import { buildSearchRegex, isValidEmail } from '../utils/security.js';
 import { cloudinary, extractPublicId } from '../utils/fileUpload.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,13 +19,24 @@ const __dirname = path.dirname(__filename);
 // @access  Public
 export const submitApplication = async (req, res, next) => {
   try {
-    const { jobId, jobTitle, applicantName, email, phone, portfolioUrl, coverLetter } = req.body;
+    const str = (v) => (typeof v === 'string' ? v.trim() : '');
+    const jobId = str(req.body.jobId);
+    const jobTitle = str(req.body.jobTitle);
+    const applicantName = str(req.body.applicantName);
+    const email = str(req.body.email).toLowerCase();
+    const phone = str(req.body.phone);
+    const portfolioUrl = str(req.body.portfolioUrl);
+    const coverLetter = str(req.body.coverLetter);
 
     if (!applicantName || !email || !phone || !jobTitle) {
       return res.status(400).json({
         success: false,
         message: 'Please provide full name, email, phone, and job title.',
       });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid email address.' });
     }
 
     if (!req.file) {
@@ -36,14 +49,14 @@ export const submitApplication = async (req, res, next) => {
     const resumeUrl = req.file.path; // Cloudinary secure URL
 
     const application = await Application.create({
-      jobId: jobId || null,
-      jobTitle,
-      applicantName: applicantName.trim(),
-      email: email.trim().toLowerCase(),
-      phone: phone.trim(),
+      jobId: mongoose.isValidObjectId(jobId) ? jobId : null,
+      jobTitle: jobTitle.slice(0, 200),
+      applicantName: applicantName.slice(0, 120),
+      email,
+      phone: phone.slice(0, 30),
       resumeUrl,
-      portfolioUrl: portfolioUrl ? portfolioUrl.trim() : '',
-      coverLetter: coverLetter ? coverLetter.trim() : '',
+      portfolioUrl: portfolioUrl.slice(0, 500),
+      coverLetter: coverLetter.slice(0, 5000),
       status: 'New',
     });
 
@@ -51,27 +64,28 @@ export const submitApplication = async (req, res, next) => {
       ? application.resumeUrl
       : `${req.protocol}://${req.get('host')}${application.resumeUrl}`;
 
-    // Fire email notifications in background safely
-    sendApplicationNotificationToHR({
-      applicantName: application.applicantName,
-      email: application.email,
-      phone: application.phone,
-      jobTitle: application.jobTitle,
-      resumeUrl: emailResumeUrl,
-      portfolioUrl: application.portfolioUrl,
-      coverLetter: application.coverLetter,
-    }).catch((err) => console.warn('[Notice]: HR email notification error:', err.message));
-
-    sendApplicationConfirmationToCandidate({
-      applicantName: application.applicantName,
-      email: application.email,
-      jobTitle: application.jobTitle,
-    }).catch((err) => console.warn('[Notice]: Candidate email notification error:', err.message));
+    // Awaited (with internal timeouts) so serverless functions don't freeze before sending.
+    await Promise.allSettled([
+      sendApplicationNotificationToHR({
+        applicantName: application.applicantName,
+        email: application.email,
+        phone: application.phone,
+        jobTitle: application.jobTitle,
+        resumeUrl: emailResumeUrl,
+        portfolioUrl: application.portfolioUrl,
+        coverLetter: application.coverLetter,
+      }),
+      sendApplicationConfirmationToCandidate({
+        applicantName: application.applicantName,
+        email: application.email,
+        jobTitle: application.jobTitle,
+      }),
+    ]);
 
     return res.status(201).json({
       success: true,
-      message: 'Your application has been submitted successfully! We have sent you a confirmation email.',
-      data: application,
+      message: 'Your application has been submitted successfully. Thank you for your interest in Tattva Tech!',
+      data: { _id: application._id, jobTitle: application.jobTitle, createdAt: application.createdAt },
     });
   } catch (error) {
     next(error);
@@ -89,11 +103,11 @@ export const getApplicationsAdmin = async (req, res, next) => {
     if (status && status !== 'All') {
       query.status = status;
     }
-    if (jobId) {
+    if (jobId && mongoose.isValidObjectId(jobId)) {
       query.jobId = jobId;
     }
-    if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), 'i');
+    const regex = buildSearchRegex(search);
+    if (regex) {
       query.$or = [{ applicantName: regex }, { email: regex }, { jobTitle: regex }, { phone: regex }];
     }
 

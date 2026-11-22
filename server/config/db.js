@@ -1,45 +1,49 @@
 import mongoose from 'mongoose';
+import { isProduction } from '../utils/security.js';
 
-let cachedConnection = null;
+mongoose.set('strictQuery', true);
 
+let connectPromise = null;
+
+/**
+ * Connects to MongoDB once per process and caches the *promise*, so concurrent
+ * cold-start requests on serverless share a single connection attempt.
+ */
 export const connectDB = async () => {
-  // If already connected, reuse existing connection immediately (0ms overhead)
-  if (mongoose.connection.readyState >= 1) {
-    return mongoose.connection;
+  if (mongoose.connection.readyState === 1) return mongoose.connection;
+  if (connectPromise) return connectPromise;
+
+  const uri = process.env.MONGODB_URI || (isProduction() ? '' : 'mongodb://127.0.0.1:27017/tattva_tech_db');
+  if (!uri) {
+    throw new Error('MONGODB_URI is not configured.');
   }
 
-  if (cachedConnection) {
-    return cachedConnection;
-  }
-
-  const primaryUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tattva_tech_db';
-
-  try {
-    const conn = await mongoose.connect(primaryUri, {
-      serverSelectionTimeoutMS: 8000,
+  connectPromise = mongoose
+    .connect(uri, { serverSelectionTimeoutMS: 8000 })
+    .then((conn) => {
+      console.log(`[MongoDB Connected]: ${conn.connection.host}/${conn.connection.name}`);
+      return conn.connection;
+    })
+    .catch((error) => {
+      console.error(`[MongoDB Connection Error]: ${error.message}`);
+      connectPromise = null; // allow a retry on the next request
+      throw error;
     });
-    cachedConnection = conn;
-    console.log(`[MongoDB Connected]: ${conn.connection.host}/${conn.connection.name}`);
-    return conn;
+
+  return connectPromise;
+};
+
+/** Express middleware: ensure the DB is connected before handling the request. */
+export const requireDB = async (req, res, next) => {
+  try {
+    await connectDB();
+    return next();
   } catch (error) {
-    console.error(`[MongoDB Connection Error]: Could not connect to primary database.`);
-    console.error(`Reason: ${error.message}`);
-
-    // Fallback to local MongoDB only when running locally (not in production / Vercel cloud)
-    if (process.env.NODE_ENV !== 'production' && (primaryUri.includes('mongodb+srv://') || !primaryUri.includes('127.0.0.1'))) {
-      console.log('[Notice]: Attempting fallback to local MongoDB (mongodb://127.0.0.1:27017/tattva_tech_db)...');
-      try {
-        const localConn = await mongoose.connect('mongodb://127.0.0.1:27017/tattva_tech_db', {
-          serverSelectionTimeoutMS: 4000,
-        });
-        cachedConnection = localConn;
-        console.log(`[MongoDB Connected via Local Fallback]: ${localConn.connection.host}/${localConn.connection.name}`);
-        return localConn;
-      } catch (localErr) {
-        console.error(`[Local MongoDB Fallback Error]: ${localErr.message}`);
-      }
-    }
-
-    throw error;
+    return res.status(503).json({
+      success: false,
+      message: 'Service temporarily unavailable, please try again shortly.',
+    });
   }
 };
+
+export const dbStatus = () => (mongoose.connection.readyState === 1 ? 'connected' : 'disconnected');

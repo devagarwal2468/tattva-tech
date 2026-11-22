@@ -6,12 +6,13 @@ import {
   deleteContact,
 } from '../controllers/contact.controller.js';
 import { protectAdmin } from '../middleware/auth.js';
+import { contactLimiter } from '../middleware/rateLimits.js';
 
 const router = express.Router();
 
 router.route('/')
-  .post(submitContact)
-  .get(getContacts);
+  .post(contactLimiter, submitContact)
+  .get(protectAdmin, getContacts);
 
 router.route('/:id')
   .patch(protectAdmin, updateContactStatus)

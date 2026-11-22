@@ -1,5 +1,5 @@
 import Product from '../models/Product.js';
-import mongoose from 'mongoose';
+import { buildSearchRegex } from '../utils/security.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -14,17 +14,17 @@ const defaultProducts = [
     name: 'MailPilot',
     tagline: 'Email automation for modern businesses with high deliverability.',
     category: 'Marketing',
-    badge: 'Flagship',
+    badge: '',
     icon: 'Send',
     previewType: 'mail',
     description:
       'MailPilot helps businesses automate outreach, nurture leads and scale communication with powerful email marketing tools, domain reputation monitoring, and autonomous follow-ups.',
-    productUrl: 'https://mailpilot.tattvatech.com',
+    productUrl: '',
     features: ['Instant SMTP Delivery', 'Smart Spam Protection', 'Dynamic Personalization', 'Analytics Suite'],
     metrics: {
-      activeUsers: '10K+',
-      deliveryRate: '98%',
-      engagement: '3x',
+      activeUsers: '',
+      deliveryRate: '',
+      engagement: '',
     },
     isFeatured: true,
     isPublished: true,
@@ -34,17 +34,17 @@ const defaultProducts = [
     name: 'LeadFlow CRM',
     tagline: 'Manage leads, clients and sales pipelines with intuitive ease.',
     category: 'CRM',
-    badge: 'Top Rated',
+    badge: '',
     icon: 'Users',
     previewType: 'crm',
     description:
       'A high-performance pipeline manager for closing enterprise deals, tracking sales team quota velocity, and syncing revenue data in real-time.',
-    productUrl: 'https://leadflow.tattvatech.com',
+    productUrl: '',
     features: ['Visual Kanban Pipeline', 'Automated Deal Scoring', 'Stripe & Quickbooks Sync', 'Team Activity Logs'],
     metrics: {
-      activeUsers: '8.5K+',
-      deliveryRate: '99.9%',
-      engagement: '2.5x',
+      activeUsers: '',
+      deliveryRate: '',
+      engagement: '',
     },
     isFeatured: false,
     isPublished: true,
@@ -54,17 +54,17 @@ const defaultProducts = [
     name: 'AI Agent Hub',
     tagline: 'Build, test and deploy autonomous multi-agent AI teams in minutes.',
     category: 'AI Agents',
-    badge: 'New AI',
+    badge: '',
     icon: 'Bot',
     previewType: 'agent',
     description:
       'Deploy autonomous teams of LLM-powered workers that collaborate to solve complex customer queries, draft engineering specs, and execute web research.',
-    productUrl: 'https://aihub.tattvatech.com',
+    productUrl: '',
     features: ['Multi-Agent Mesh', 'Deterministic Tool Calling', 'Long-term Memory Store', 'Audit Guardrails'],
     metrics: {
-      activeUsers: '15K+',
-      deliveryRate: '99%',
-      engagement: '5x',
+      activeUsers: '',
+      deliveryRate: '',
+      engagement: '',
     },
     isFeatured: false,
     isPublished: true,
@@ -74,17 +74,17 @@ const defaultProducts = [
     name: 'InsightBoard',
     tagline: 'Turn fragmented data silos into real-time actionable visual insights.',
     category: 'Analytics',
-    badge: 'Enterprise',
+    badge: '',
     icon: 'BarChart3',
     previewType: 'analytics',
     description:
       'Unified executive intelligence dashboard uniting disparate analytics databases into sub-second visual charts, anomaly alerts, and revenue forecasts.',
-    productUrl: 'https://insightboard.tattvatech.com',
+    productUrl: '',
     features: ['Sub-second OLAP Queries', 'Automated Anomaly Detection', 'Custom Executive Reports', 'Role-based Access'],
     metrics: {
-      activeUsers: '12K+',
-      deliveryRate: '100%',
-      engagement: '4x',
+      activeUsers: '',
+      deliveryRate: '',
+      engagement: '',
     },
     isFeatured: false,
     isPublished: true,
@@ -93,14 +93,22 @@ const defaultProducts = [
 ];
 
 // Seed initial products if collection is empty
-const seedProductsIfEmpty = async () => {
-  if (mongoose.connection.readyState === 1) {
-    const count = await Product.countDocuments();
-    if (count === 0) {
-      await Product.insertMany(defaultProducts);
-      console.log('[Database Seeded]: Initial SaaS products inserted.');
-    }
+// Runs at most once per process (the DB is guaranteed connected by requireDB).
+let seedPromise = null;
+const seedProductsIfEmpty = () => {
+  if (!seedPromise) {
+    seedPromise = (async () => {
+      const count = await Product.countDocuments();
+      if (count === 0) {
+        await Product.insertMany(defaultProducts);
+        console.log('[Database Seeded]: Initial SaaS products inserted.');
+      }
+    })().catch((err) => {
+      seedPromise = null;
+      console.warn('[Seed Warning]: Product seed failed:', err.message);
+    });
   }
+  return seedPromise;
 };
 
 // @desc    Get published products for public /products page
@@ -141,8 +149,8 @@ export const getAllProductsAdmin = async (req, res, next) => {
       query.category = category;
     }
 
-    if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), 'i');
+    const regex = buildSearchRegex(search);
+    if (regex) {
       query.$or = [{ name: regex }, { tagline: regex }, { category: regex }, { badge: regex }];
     }
 
@@ -208,7 +216,7 @@ export const createProduct = async (req, res, next) => {
     }
 
     // Parse metrics
-    let parsedMetrics = { activeUsers: '10K+', deliveryRate: '98%', engagement: '3x' };
+    let parsedMetrics = { activeUsers: '', deliveryRate: '', engagement: '' };
     if (metrics) {
       if (typeof metrics === 'string') {
         try {
@@ -226,7 +234,7 @@ export const createProduct = async (req, res, next) => {
       tagline: tagline.trim(),
       category: category.trim(),
       description: description ? description.trim() : '',
-      badge: badge ? badge.trim() : 'Flagship',
+      badge: badge ? badge.trim() : '',
       icon: icon ? icon.trim() : 'Send',
       previewType: previewType || (coverImage ? 'custom_image' : 'mail'),
       coverImage,

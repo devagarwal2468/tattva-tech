@@ -1,288 +1,166 @@
 import React from 'react';
-import {
-  Target,
-  MessageSquare,
-  Users,
-  Headphones,
-  CheckCircle,
-  ArrowRight,
-  Shield,
-  Lightbulb,
-  Award,
-  Sparkles,
-  Palette,
-  Bot,
-  Rocket,
-  Layers,
-  BookOpen,
-  UsersRound,
-  KeyRound,
-  MonitorSmartphone,
-  Eye,
-} from 'lucide-react';
-import './About.css';
+import { Linkedin, MapPin } from 'lucide-react';
+import PageHero from '../components/sections/PageHero';
+import CtaBand from '../components/sections/CtaBand';
+import Reveal from '../components/ui/Reveal';
+import Icon from '../components/ui/Icon';
+import Button from '../components/ui/Button';
+import { Section, SectionHeader } from '../components/ui/Section';
+import { useSeo } from '../lib/seo';
+import { company, leadership, offices, principles, socials, stats } from '../content/site';
 
-export default function About({ setActivePage }) {
-  const stats = [
-    { value: '50+', label: 'Projects' },
-    { value: '30+', label: 'Clients' },
-    { value: '5+', label: 'Products' },
-    { value: '3+', label: 'Offices' },
-  ];
+const capabilities = [
+  {
+    title: 'Software & AI',
+    icon: 'Code2',
+    text: 'Custom software, web and mobile apps, AI and machine learning, AI agents, automation and SaaS product development.',
+  },
+  {
+    title: 'Robotics & IoT',
+    icon: 'Bot',
+    text: 'Custom robots from architecture to prototype — educational and service robots, sensors, embedded systems, computer vision and autonomy.',
+  },
+  {
+    title: 'Design & Growth',
+    icon: 'PenTool',
+    text: 'UI/UX and website design, branding, graphic design, video, social content, SEO, AEO, GEO and digital marketing.',
+  },
+];
 
-  const pillars = [
-    {
-      title: 'Product-Focused Approach',
-      desc: 'We treat every line of code as an investment in your product’s long-term business viability and user adoption.',
-      icon: Target,
-      color: 'blue',
-    },
-    {
-      title: 'Transparent Communication',
-      desc: 'Clear roadmaps, honest sprint retrospectives, direct Slack/Teams channels, and no hidden surprises.',
-      icon: MessageSquare,
-      color: 'cyan',
-    },
-    {
-      title: 'Skilled & Dedicated Team',
-      desc: 'Top 3% specialized full-stack engineers, AI researchers, and UX architects dedicated to your mission.',
-      icon: Users,
-      color: 'purple',
-    },
-    {
-      title: 'Long-Term Support',
-      desc: 'We don’t just deliver and vanish; we proactively maintain, optimize performance, and scale with you.',
-      icon: Headphones,
-      color: 'emerald',
-    },
-  ];
-
-  const teamMembers = [
-    {
-      name: 'Sanskar Jain',
-      role: 'Founder',
-      initials: 'SJ',
-      gradient: 'from-blue-600 via-indigo-600 to-blue-700',
-      badgeColor: 'bg-blue-50 text-blue-700 border-blue-200',
-      focus: 'Vision, Product Strategy & AI Architecture',
-    },
-    {
-      name: 'Dev Agarwal',
-      role: 'Co Founder',
-      initials: 'DA',
-      gradient: 'from-cyan-600 via-blue-600 to-indigo-600',
-      badgeColor: 'bg-cyan-50 text-cyan-700 border-cyan-200',
-      focus: 'Business Operations, Growth & Client Partnerships',
-    },
-  ];
-
-  const workLifeBenefits = [
-    { title: 'Learning & Development', icon: BookOpen, color: 'pink' },
-    { title: 'Inclusive & Open Culture', icon: UsersRound, color: 'teal' },
-    { title: 'Global Opportunities', icon: KeyRound, color: 'rose' },
-    { title: 'Latest Technology', icon: MonitorSmartphone, color: 'indigo' },
-  ];
+export default function About() {
+  useSeo({
+    title: 'About Us',
+    description:
+      'Tattva Tech is a technology and innovation company building software, AI, robotics and digital solutions. Meet our leadership and offices in Gurugram, Gwalior and Saharanpur.',
+  });
+  const linkedin = socials.find((s) => s.label === 'LinkedIn')?.href;
 
   return (
-    <div className="about-page pt-28 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* ================= HEADER SECTION (Screen 5) ================= */}
-        <div className="max-w-3xl space-y-4 text-left mb-10">
-          <span className="text-xs font-bold tracking-widest text-blue-600 uppercase">
-            About Tattva Tech
-          </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-            Technology, AI, Robotics & Digital Solutions{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Built for Real-World Impact
-            </span>
-          </h1>
-          <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-            Tattva Tech is a technology and innovation company providing software, AI, robotics, digital, creative, and business solutions for startups, businesses, educational institutions, and organizations. We help our clients turn ideas into practical, scalable, and cost-effective solutions that create real business value.
-          </p>
-        </div>
+    <>
+      <PageHero
+        eyebrow="About Tattva Tech"
+        title="Technology, AI and robotics — built for real-world impact."
+        lead={company.summary}
+        breadcrumbs={[{ label: 'About' }]}
+      />
 
-        {/* ================= STATS ROW ================= */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-y border-slate-200/80 mb-12">
-          {stats.map((item, idx) => (
-            <div key={idx} className="text-center sm:text-left">
-              <div className="text-3xl sm:text-4xl font-extrabold text-blue-600 tracking-tight">
-                {item.value}
-              </div>
-              <div className="text-sm font-semibold text-slate-700 mt-1">{item.label}</div>
+      <section className="border-b border-ink-100 bg-white">
+        <dl className="container-site grid grid-cols-2 divide-ink-100 py-10 md:grid-cols-4 md:divide-x">
+          {stats.map((s) => (
+            <div key={s.label} className="px-2 py-4 text-center md:px-6">
+              <dd className="font-display text-4xl font-bold tracking-tight text-ink-900 sm:text-5xl">{s.value}</dd>
+              <dt className="mt-2 text-sm text-ink-500">{s.label}</dt>
             </div>
           ))}
-        </div>
+        </dl>
+      </section>
 
-        <div className="mb-16 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <article className="lg:col-span-3 rounded-3xl border border-slate-200 bg-white p-7 sm:p-9 shadow-sm">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 shrink-0 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <Layers className="w-6 h-6" />
-              </div>
+      <Section>
+        <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
+          <Reveal>
+            <p className="eyebrow mb-4">Our story</p>
+            <h2 className="h-section">From an idea to a connected technology team.</h2>
+          </Reveal>
+          <Reveal delay={100} className="space-y-5 text-lg leading-relaxed text-ink-500">
+            <p>
+              Tattva — “essence” in Sanskrit — reflects how we work: get to the essence of a problem, then build the simplest solution that truly solves it.
+            </p>
+            <p>
+              We help startups, businesses, educational institutions and organisations turn ideas into practical, scalable and cost-effective solutions. Whether you need a website, a mobile app, an AI system, a custom robot, a SaaS product or a brand, one team supports the complete journey — strategy, design, development, testing, deployment, marketing and ongoing improvement.
+            </p>
+            <p>
+              We collaborate with clients in India and internationally through project-based and white-label development, dedicated teams and long-term technology partnerships.
+            </p>
+          </Reveal>
+        </div>
+      </Section>
+
+      <Section className="bg-ink-50/60">
+        <SectionHeader eyebrow="What we bring" title="Three disciplines, one team." />
+        <div className="grid gap-6 md:grid-cols-3">
+          {capabilities.map((c, i) => (
+            <Reveal key={c.title} delay={i * 80} className="card p-8">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                <Icon name={c.icon} className="h-6 w-6" />
+              </span>
+              <h3 className="mt-6 font-display text-xl font-semibold">{c.title}</h3>
+              <p className="mt-2.5 leading-relaxed text-ink-500">{c.text}</p>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      <Section dark>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Reveal className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 sm:p-10">
+            <p className="eyebrow eyebrow-dark">Mission</p>
+            <p className="mt-5 font-display text-2xl font-semibold leading-snug text-white sm:text-3xl">
+              To make reliable, modern technology — software, AI and robotics — practical and affordable for every organisation we work with.
+            </p>
+          </Reveal>
+          <Reveal delay={100} className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 sm:p-10">
+            <p className="eyebrow eyebrow-dark">Vision</p>
+            <p className="mt-5 font-display text-2xl font-semibold leading-snug text-white sm:text-3xl">
+              To become a trusted, AI-first engineering partner known for craft, speed of execution and long-term relationships.
+            </p>
+          </Reveal>
+        </div>
+      </Section>
+
+      <Section>
+        <SectionHeader eyebrow="Leadership" title="The people behind Tattva Tech." />
+        <div className="grid gap-6 sm:grid-cols-2 lg:max-w-4xl">
+          {leadership.map((p, i) => (
+            <Reveal key={p.name} delay={i * 80} className="card flex items-center gap-6 p-7">
+              <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-600 to-cyan-500 font-display text-2xl font-bold text-white">
+                {p.initials}
+              </span>
               <div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">One ecosystem for technology, creativity, and growth</h2>
-                <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
-                  Our expertise covers custom software, web and mobile app development, AI and machine learning, AI agents, automation, IoT, robotics, UI/UX and graphic design, video editing, branding, digital marketing, SEO, AEO, GEO, content creation, and digital product development. We bring technology, creativity, and business understanding together to help organizations launch, grow, automate, and compete in the digital world.
+                <h3 className="font-display text-xl font-semibold">{p.name}</h3>
+                <p className="text-sm font-semibold text-brand-600">{p.role}</p>
+                <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-500">{p.focus}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      <Section className="bg-ink-50/60">
+        <SectionHeader eyebrow="How we work" title="Principles we hold ourselves to." />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {principles.map((p, i) => (
+            <Reveal key={p.title} delay={i * 80} className="card p-7">
+              <Icon name={p.icon} className="h-6 w-6 text-brand-600" />
+              <h3 className="mt-5 font-display text-lg font-semibold">{p.title}</h3>
+              <p className="mt-2 leading-relaxed text-ink-500">{p.desc}</p>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      <Section>
+        <SectionHeader
+          eyebrow="Offices"
+          title="Rooted in India, working worldwide."
+          action={linkedin && <Button href={linkedin} variant="secondary"><Linkedin className="h-4 w-4" aria-hidden="true" /> Follow us</Button>}
+        />
+        <div className="grid gap-6 md:grid-cols-3">
+          {offices.map((o, i) => (
+            <Reveal key={o.city} delay={i * 80} className="group relative overflow-hidden rounded-2xl">
+              <img src={o.image} alt={o.imageAlt} loading="lazy" width="600" height="440" className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/30 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-6">
+                <h3 className="font-display text-2xl font-semibold text-white">{o.city}</h3>
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-ink-200">
+                  <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> {o.region}
                 </p>
               </div>
-            </div>
-          </article>
-
-          <article className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-7 shadow-sm">
-            <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-5">
-              <Bot className="w-6 h-6" />
-            </div>
-            <h2 className="text-lg font-extrabold text-slate-900">Robotics & Intelligent Automation</h2>
-            <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-              We design custom robotic systems around each project’s requirements, use cases, and budget—from robot design and architecture to prototypes, AI-powered and autonomous systems, educational and service robots, sensor integration, embedded systems, computer vision, and automation.
-            </p>
-            <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-              Our goal is to make practical, reliable, cost-effective robotics accessible to startups, schools, colleges, research institutions, and small businesses—not only large organizations.
-            </p>
-          </article>
-
-          <article className="rounded-3xl border border-cyan-100 bg-gradient-to-br from-cyan-50 to-white p-7 shadow-sm">
-            <div className="w-12 h-12 rounded-2xl bg-cyan-600 text-white flex items-center justify-center mb-5">
-              <Palette className="w-6 h-6" />
-            </div>
-            <h2 className="text-lg font-extrabold text-slate-900">Digital & Creative Solutions</h2>
-            <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-              Our digital and creative team builds strong online presences through UI/UX and website design, graphic design, video editing, social media content, branding, SEO, AEO, GEO, digital marketing, and content creation.
-            </p>
-            <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-              From a distinct brand identity to a complete digital platform, clients can work with one connected technology and creative team.
-            </p>
-          </article>
-
-          <article className="rounded-3xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white p-7 shadow-sm">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mb-5">
-              <Rocket className="w-6 h-6" />
-            </div>
-            <h2 className="text-lg font-extrabold text-slate-900">From Idea to Deployment</h2>
-            <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-              Whether you need a website, mobile app, AI solution, automation system, custom robot, SaaS product, brand identity, or digital marketing, our team can support the complete journey: strategy and design, development, testing, deployment, marketing, and ongoing improvements.
-            </p>
-            <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-              We collaborate with international startups, businesses, agencies, and technology companies through project-based and white-label development, dedicated teams, outsourcing, and long-term technology partnerships.
-            </p>
-          </article>
-        </div>
-
-        {/* ================= 4 CORE PILLARS (Screen 5) ================= */}
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {pillars.map((pillar, idx) => (
-            <div
-              key={idx}
-              className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center mb-4">
-                <pillar.icon className="w-6 h-6" />
-              </div>
-              <h3 className="text-base font-bold text-slate-900 mb-2">
-                {pillar.title}
-              </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                {pillar.desc}
-              </p>
-            </div>
+            </Reveal>
           ))}
         </div>
+      </Section>
 
-        <section className="mt-20" aria-labelledby="work-life-heading">
-          <div className="mb-9 text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">
-              Our Culture
-            </span>
-            <h2
-              className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900"
-              id="work-life-heading"
-            >
-              Work Life At Its Best
-            </h2>
-          </div>
-          <div className="work-life-benefits">
-            {workLifeBenefits.map(({ title, icon: BenefitIcon, color }) => (
-              <article
-                className={`work-life-card work-life-card-${color}`}
-                key={title}
-              >
-                <BenefitIcon aria-hidden="true" className="work-life-card-icon" strokeWidth={1.7} />
-                <h3>{title}</h3>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="about-mission-vision mt-20" aria-label="Our mission and corporate vision">
-          <article className="mission-vision-card">
-            <div className="mission-vision-accent" aria-hidden="true">
-              <Target className="h-6 w-6" />
-            </div>
-            <h2>Our Mission</h2>
-            <p>
-              To build high-concurrency, zero-trust software systems and autonomous AI pipelines that deliver measurable operational leverage to ambitious organizations worldwide.
-            </p>
-          </article>
-          <article className="mission-vision-card">
-            <div className="mission-vision-accent" aria-hidden="true">
-              <Eye className="h-6 w-6" />
-            </div>
-            <h2>Our Corporate Vision</h2>
-            <p>
-              To become a globally recognized AI-first engineering partner, known for technical craft, execution speed, and verified proof-of-work talent incubation.
-            </p>
-          </article>
-        </section>
-
-        {/* ================= MEET OUR LEADERSHIP SECTION ================= */}
-        <div className="mt-24 pt-16 border-t border-slate-200/90 text-left">
-          <div className="max-w-2xl mb-12">
-            <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
-              Founders & Leadership
-            </span>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight mt-2">
-              The Leadership Behind Tattva Tech
-            </h2>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed mt-2">
-              Visionary leadership driving engineering excellence, enterprise scale, and client success.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {teamMembers.map((member, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 group flex flex-col sm:flex-row items-start sm:items-center gap-6"
-              >
-                <div
-                  className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${member.gradient} text-white font-black text-2xl flex items-center justify-center shadow-lg shadow-blue-500/15 group-hover:scale-105 transition-transform flex-shrink-0`}
-                >
-                  {member.initials}
-                </div>
-                <div className="space-y-2 flex-1">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <h3 className="text-xl font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors">
-                      {member.name}
-                    </h3>
-                    <span
-                      className={`text-xs font-bold px-3 py-0.5 rounded-full border ${member.badgeColor}`}
-                    >
-                      {member.role}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                    {member.focus}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </div>
-
-    </div>
+      <CtaBand />
+    </>
   );
 }

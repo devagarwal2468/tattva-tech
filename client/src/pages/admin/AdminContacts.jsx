@@ -280,6 +280,23 @@ export default function AdminContacts({ token }) {
                 <span className="text-slate-500">Company:</span>
                 <span className="font-bold text-slate-800">{selectedEnquiry.company || 'Not Specified'}</span>
               </div>
+              {[
+                ['Phone', selectedEnquiry.phone],
+                ['Service', selectedEnquiry.service],
+                ['Budget', selectedEnquiry.budget],
+                ['Source', selectedEnquiry.source],
+              ]
+                .filter(([, value]) => value)
+                .map(([label, value]) => (
+                  <div key={label} className="flex items-center justify-between gap-4">
+                    <span className="text-slate-500">{label}:</span>
+                    {label === 'Phone' ? (
+                      <a href={`tel:${value}`} className="font-bold text-blue-600 hover:underline">{value}</a>
+                    ) : (
+                      <span className="text-right font-bold text-slate-800">{value}</span>
+                    )}
+                  </div>
+                ))}
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">Submitted On:</span>
                 <span className="font-mono text-slate-700">{new Date(selectedEnquiry.createdAt).toLocaleString()}</span>
@@ -316,7 +333,7 @@ export default function AdminContacts({ token }) {
               </button>
               <div className="flex items-center gap-2">
                 <a
-                  href={`mailto:${selectedEnquiry.email}?subject=Regarding your enquiry with Tattvaa Tech`}
+                  href={`mailto:${selectedEnquiry.email}?subject=Regarding your enquiry with Tattva Tech`}
                   className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold shadow hover:bg-blue-700 transition-colors flex items-center gap-1.5"
                 >
                   <Mail className="w-3.5 h-3.5" />

@@ -1,4 +1,16 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+export const API_BASE = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
+
+// Parse a fetch Response safely: tolerate empty bodies and non-JSON error pages
+// (e.g. a proxy 502 HTML page) so callers always get a readable error message.
+export const parseJson = async (res) => {
+  const text = await res.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { success: false, message: res.ok ? 'Unexpected server response.' : `Server error (${res.status}). Please try again.` };
+  }
+};
 
 const getHeaders = (token, isFormData = false) => {
   const headers = {};
@@ -18,7 +30,7 @@ export const loginAdmin = async (credentials) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Login failed');
   return data;
 };
@@ -29,7 +41,7 @@ export const registerAdmin = async (userData) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userData),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Registration failed');
   return data;
 };
@@ -38,7 +50,7 @@ export const getAdminMe = async (token) => {
   const res = await fetch(`${API_BASE}/auth/me`, {
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Authentication check failed');
   return data;
 };
@@ -49,7 +61,7 @@ export const changeAdminPassword = async (passwords, token) => {
     headers: getHeaders(token),
     body: JSON.stringify(passwords),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to change password');
   return data;
 };
@@ -59,7 +71,7 @@ export const fetchDashboardStats = async (token) => {
   const res = await fetch(`${API_BASE}/admin/stats`, {
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch dashboard stats');
   return data.data;
 };
@@ -71,7 +83,7 @@ export const submitContactEnquiry = async (formData) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to submit enquiry');
   return data;
 };
@@ -84,7 +96,7 @@ export const fetchContactsAdmin = async ({ status = 'All', search = '' } = {}, t
   const res = await fetch(`${API_BASE}/contact?${params.toString()}`, {
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch enquiries');
   return data;
 };
@@ -95,7 +107,7 @@ export const updateContactStatus = async (id, { status, notes }, token) => {
     headers: getHeaders(token),
     body: JSON.stringify({ status, notes }),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to update enquiry status');
   return data;
 };
@@ -105,7 +117,7 @@ export const deleteContactEnquiry = async (id, token) => {
     method: 'DELETE',
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to delete enquiry');
   return data;
 };
@@ -116,7 +128,7 @@ export const fetchPublicProjects = async (category = 'All') => {
   if (category && category !== 'All') params.append('category', category);
 
   const res = await fetch(`${API_BASE}/projects?${params.toString()}`);
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch projects');
   return data.data || [];
 };
@@ -129,7 +141,7 @@ export const fetchAdminProjects = async ({ category = 'All', search = '' } = {},
   const res = await fetch(`${API_BASE}/projects/admin/all?${params.toString()}`, {
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch admin projects');
   return data.data || [];
 };
@@ -140,7 +152,7 @@ export const createProject = async (formData, token) => {
     headers: getHeaders(token, true),
     body: formData,
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to create project');
   return data;
 };
@@ -151,7 +163,7 @@ export const updateProject = async (id, formData, token) => {
     headers: getHeaders(token, true),
     body: formData,
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to update project');
   return data;
 };
@@ -161,7 +173,7 @@ export const togglePublishProject = async (id, token) => {
     method: 'PATCH',
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to toggle project status');
   return data;
 };
@@ -171,7 +183,7 @@ export const deleteProject = async (id, token) => {
     method: 'DELETE',
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to delete project');
   return data;
 };
@@ -179,7 +191,7 @@ export const deleteProject = async (id, token) => {
 // ================= JOBS / CAREERS =================
 export const fetchPublicJobs = async () => {
   const res = await fetch(`${API_BASE}/jobs`);
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch vacancies');
   return data.data || [];
 };
@@ -192,7 +204,7 @@ export const fetchAdminJobs = async ({ status = 'All', search = '' } = {}, token
   const res = await fetch(`${API_BASE}/jobs/admin/all?${params.toString()}`, {
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch admin jobs');
   return data.data || [];
 };
@@ -203,7 +215,7 @@ export const createJob = async (jobData, token) => {
     headers: getHeaders(token),
     body: JSON.stringify(jobData),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to create vacancy');
   return data;
 };
@@ -214,7 +226,7 @@ export const updateJob = async (id, jobData, token) => {
     headers: getHeaders(token),
     body: JSON.stringify(jobData),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to update vacancy');
   return data;
 };
@@ -225,7 +237,7 @@ export const updateJobStatus = async (id, status, token) => {
     headers: getHeaders(token),
     body: JSON.stringify({ status }),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to update job status');
   return data;
 };
@@ -235,7 +247,7 @@ export const deleteJob = async (id, token) => {
     method: 'DELETE',
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to delete vacancy');
   return data;
 };
@@ -246,7 +258,7 @@ export const submitJobApplication = async (formData) => {
     method: 'POST',
     body: formData,
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to submit application');
   return data;
 };
@@ -259,7 +271,7 @@ export const fetchAdminApplications = async ({ status = 'All', search = '' } = {
   const res = await fetch(`${API_BASE}/applications/admin/all?${params.toString()}`, {
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch applications');
   return data.data || [];
 };
@@ -270,7 +282,7 @@ export const updateApplicationStatus = async (id, { status, adminNotes }, token)
     headers: getHeaders(token),
     body: JSON.stringify({ status, adminNotes }),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to update application');
   return data;
 };
@@ -280,7 +292,7 @@ export const deleteApplication = async (id, token) => {
     method: 'DELETE',
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to delete application');
   return data;
 };
@@ -290,7 +302,7 @@ export const downloadResume = async (id, token) => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
+    const data = await parseJson(res).catch(() => ({}));
     throw new Error(data.message || 'Failed to download resume');
   }
   const blob = await res.blob();
@@ -313,7 +325,7 @@ export const fetchPublicProducts = async (category = 'All') => {
   if (category && category !== 'All' && category !== 'All Products') params.append('category', category);
 
   const res = await fetch(`${API_BASE}/products?${params.toString()}`);
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch products');
   return data.data || [];
 };
@@ -326,7 +338,7 @@ export const fetchAdminProducts = async ({ category = 'All', search = '' } = {},
   const res = await fetch(`${API_BASE}/products/admin/all?${params.toString()}`, {
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch admin products');
   return data.data || [];
 };
@@ -338,7 +350,7 @@ export const createProduct = async (formData, token) => {
     headers: getHeaders(token, isForm),
     body: isForm ? formData : JSON.stringify(formData),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to create product');
   return data;
 };
@@ -350,7 +362,7 @@ export const updateProduct = async (id, formData, token) => {
     headers: getHeaders(token, isForm),
     body: isForm ? formData : JSON.stringify(formData),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to update product');
   return data;
 };
@@ -360,7 +372,7 @@ export const togglePublishProduct = async (id, token) => {
     method: 'PATCH',
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to toggle product status');
   return data;
 };
@@ -370,7 +382,7 @@ export const deleteProduct = async (id, token) => {
     method: 'DELETE',
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to delete product');
   return data;
 };
@@ -381,7 +393,7 @@ export const fetchPublicInsights = async (tag = 'All') => {
   if (tag && tag !== 'All') params.append('tag', tag);
 
   const res = await fetch(`${API_BASE}/insights?${params.toString()}`);
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch insights');
   return data.data || [];
 };
@@ -394,7 +406,7 @@ export const fetchAdminInsights = async ({ tag = 'All', search = '' } = {}, toke
   const res = await fetch(`${API_BASE}/insights/admin/all?${params.toString()}`, {
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to fetch admin insights');
   return data.data || [];
 };
@@ -406,7 +418,7 @@ export const createInsight = async (formData, token) => {
     headers: getHeaders(token, isForm),
     body: isForm ? formData : JSON.stringify(formData),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to create insight');
   return data;
 };
@@ -418,7 +430,7 @@ export const updateInsight = async (id, formData, token) => {
     headers: getHeaders(token, isForm),
     body: isForm ? formData : JSON.stringify(formData),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to update insight');
   return data;
 };
@@ -428,7 +440,7 @@ export const togglePublishInsight = async (id, token) => {
     method: 'PATCH',
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to toggle insight status');
   return data;
 };
@@ -438,7 +450,7 @@ export const deleteInsight = async (id, token) => {
     method: 'DELETE',
     headers: getHeaders(token),
   });
-  const data = await res.json();
+  const data = await parseJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to delete insight');
   return data;
 };
