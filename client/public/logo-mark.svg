@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 72" fill="none">
+  <defs>
+    <linearGradient id="tt-bar" x1="0" y1="10" x2="100" y2="4" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#16206a"/>
+      <stop offset="0.5" stop-color="#1f45ec"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="tt-stem" x1="55" y1="16" x2="34" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#16206a"/>
+      <stop offset="0.45" stop-color="#1935cf"/>
+      <stop offset="1" stop-color="#2f6bff"/>
+    </linearGradient>
+    <linearGradient id="tt-leaf" x1="54" y1="54" x2="92" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1f45ec"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <path d="M1 5.5C30 3.5 65 2 99 .5C95 9.5 86 15 72 16L36 21.5C17 23 5.5 16.5 1 5.5Z" fill="url(#tt-bar)"/>
+  <path d="M31 22L70 16.5C61 19 54.5 23 51.8 30C50.4 33.6 50 37.5 50 42V62.5C45.6 67.6 39.6 70.6 32 71.5C29.8 55 29.4 38 31 22Z" fill="url(#tt-stem)"/>
+  <path d="M55 36C59 25 73 20 94 18C92 31 80 41.5 55 54.5Z" fill="url(#tt-leaf)"/>
+</svg>

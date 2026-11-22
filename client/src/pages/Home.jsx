@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Check, CircleDot } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Reveal from '../components/ui/Reveal';
 import Icon from '../components/ui/Icon';
+import CountUp from '../components/ui/CountUp';
+import WordReveal from '../components/ui/WordReveal';
 import { Section, SectionHeader } from '../components/ui/Section';
 import CtaBand from '../components/sections/CtaBand';
 import FaqList from '../components/sections/FaqList';
@@ -113,7 +115,12 @@ function Hero() {
   return (
     <section className="dark-surface relative overflow-hidden bg-ink-950 pb-24 pt-32 sm:pb-32 sm:pt-40">
       <div className="bg-grid mask-fade-b pointer-events-none absolute inset-0" aria-hidden="true" />
-      <div className="pointer-events-none absolute -top-48 left-1/2 h-[620px] w-[1100px] -translate-x-1/2 rounded-full bg-brand-600/20 blur-[130px]" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="aurora aurora-1 -top-56 left-[8%] h-[520px] w-[620px] bg-brand-600/35" />
+        <div className="aurora aurora-2 -top-24 right-[4%] h-[460px] w-[520px] bg-cyan-500/20" />
+        <div className="aurora aurora-3 bottom-[-220px] left-[35%] h-[420px] w-[680px] bg-indigo-600/25" />
+      </div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden="true" />
       <div className="container-site relative grid items-center gap-16 lg:grid-cols-[1.08fr_1fr] lg:gap-12">
         <div className="animate-fade-up">
           <Link
@@ -124,8 +131,11 @@ function Hero() {
             Custom robotics &amp; IoT for education and industry
             <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" aria-hidden="true" />
           </Link>
-          <h1 className="h-display mt-7 text-white">
-            We turn ambitious ideas into <span className="text-gradient">products that matter.</span>
+          <h1 className="h-display mt-7 text-white" aria-label="We turn ambitious ideas into products that matter.">
+            <span aria-hidden="true">
+              <WordReveal text="We turn ambitious ideas into" />{' '}
+              <WordReveal text="products that matter." startIndex={5} wordClassName="text-gradient pb-1" />
+            </span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-300 sm:text-xl">
             Tattva Tech designs, builds and scales web platforms, mobile apps, AI automation, SaaS products and custom robotics — for startups, businesses and institutions.
@@ -155,11 +165,11 @@ function TechStrip() {
   return (
     <section className="border-b border-ink-100 bg-white py-10" aria-label="Technologies we work with">
       <div className="container-site">
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-ink-400">Technologies we build with</p>
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-ink-500">Technologies we build with</p>
         <div className="mask-fade-x mt-7 overflow-hidden">
           <ul className="flex w-max animate-marquee gap-12 hover:[animation-play-state:paused]">
             {row.map((t, i) => (
-              <li key={`${t}-${i}`} aria-hidden={i >= technologies.length ? 'true' : undefined} className="whitespace-nowrap font-display text-lg font-semibold text-ink-300">
+              <li key={`${t}-${i}`} aria-hidden={i >= technologies.length ? 'true' : undefined} className="whitespace-nowrap font-display text-lg font-semibold text-ink-600">
                 {t}
               </li>
             ))}
@@ -170,7 +180,9 @@ function TechStrip() {
   );
 }
 
-function ServicesGrid() {
+function ServicesExplorer() {
+  const [active, setActive] = useState(0);
+  const s = services[active];
   return (
     <Section>
       <SectionHeader
@@ -179,45 +191,84 @@ function ServicesGrid() {
         lead="Engineering, design and marketing under one roof — so your product moves from idea to impact without hand-offs between agencies."
         action={<Button to="/services" variant="secondary" arrow>All services</Button>}
       />
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((s, i) => (
-          <Reveal key={s.slug} delay={(i % 3) * 80} className={i === 0 ? 'sm:col-span-2 lg:col-span-1 lg:row-span-2' : ''}>
-            <Link
-              to={`/services/${s.slug}`}
-              className={`card-interactive group flex h-full flex-col p-7 ${i === 0 ? 'dark-surface relative overflow-hidden border-ink-900 bg-ink-950 lg:p-9' : ''}`}
+
+      {/* Desktop: tabbed explorer */}
+      <Reveal className="hidden overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-card lg:grid lg:grid-cols-[340px_1fr]">
+        <div role="tablist" aria-label="Services" aria-orientation="vertical" className="border-r border-ink-100 bg-ink-50/60 p-3">
+          {services.map((item, i) => (
+            <button
+              key={item.slug}
+              role="tab"
+              id={`svc-tab-${i}`}
+              aria-selected={active === i}
+              aria-controls="svc-panel"
+              tabIndex={active === i ? 0 : -1}
+              onClick={() => setActive(i)}
+              onMouseEnter={() => setActive(i)}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                  e.preventDefault();
+                  const next = (i + (e.key === 'ArrowDown' ? 1 : -1) + services.length) % services.length;
+                  setActive(next);
+                  document.getElementById(`svc-tab-${next}`)?.focus();
+                }
+              }}
+              className={`group relative flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-left transition-all duration-300 ${
+                active === i ? 'bg-white shadow-card' : 'hover:bg-white/60'
+              }`}
             >
-              {i === 0 && <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-brand-600/40 blur-[80px]" aria-hidden="true" />}
-              <span className={`relative flex h-12 w-12 items-center justify-center rounded-xl ${i === 0 ? 'bg-white/10 text-brand-200' : 'bg-brand-50 text-brand-600'}`}>
-                <Icon name={s.icon} className="h-6 w-6" />
+              <span className={`absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-brand-600 transition-all duration-300 ${active === i ? 'opacity-100' : 'opacity-0'}`} />
+              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors duration-300 ${active === i ? 'bg-brand-600 text-white' : 'bg-white text-ink-500 group-hover:text-brand-600'}`}>
+                <Icon name={item.icon} className="h-[18px] w-[18px]" />
               </span>
-              <h3 className={`relative mt-6 font-display text-xl font-semibold ${i === 0 ? 'text-white lg:text-2xl' : 'text-ink-900'}`}>{s.title}</h3>
-              <p className={`relative mt-2.5 leading-relaxed ${i === 0 ? 'text-ink-300' : 'text-ink-500'}`}>{s.short}</p>
-              {i === 0 && (
-                <ul className="relative mt-6 space-y-2.5">
-                  {s.deliverables.slice(0, 4).map((d) => (
-                    <li key={d} className="flex items-start gap-2 text-sm text-ink-300">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-300" aria-hidden="true" /> {d}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <span className={`relative mt-auto inline-flex items-center gap-1.5 pt-7 text-sm font-semibold ${i === 0 ? 'text-white' : 'text-brand-600'}`}>
+              <span className={`font-medium transition-colors ${active === i ? 'text-ink-900' : 'text-ink-500 group-hover:text-ink-800'}`}>{item.title}</span>
+              <ArrowRight className={`ml-auto h-4 w-4 text-brand-600 transition-all duration-300 ${active === i ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'}`} aria-hidden="true" />
+            </button>
+          ))}
+        </div>
+        <div id="svc-panel" role="tabpanel" aria-labelledby={`svc-tab-${active}`} className="relative overflow-hidden p-10 xl:p-12">
+          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-100/70 blur-3xl" aria-hidden="true" />
+          <div key={s.slug} className="panel-in relative">
+            <p className="eyebrow">{String(active + 1).padStart(2, '0')} / {String(services.length).padStart(2, '0')}</p>
+            <h3 className="mt-4 font-display text-3xl font-semibold tracking-tight xl:text-4xl">{s.hero}</h3>
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-500">{s.overview[0]}</p>
+            <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+              {s.deliverables.map((d) => (
+                <li key={d} className="flex items-start gap-2.5 text-ink-700">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+                    <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                  </span>
+                  {d}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8 flex flex-wrap gap-2">
+              {s.stack.slice(0, 7).map((t) => <span key={t} className="chip">{t}</span>)}
+            </div>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Button to={`/services/${s.slug}`} arrow>Explore {s.title}</Button>
+              <Button to={`/contact?service=${encodeURIComponent(s.title)}`} variant="secondary">Get a quote</Button>
+            </div>
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Mobile / tablet: cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:hidden">
+        {services.map((item, i) => (
+          <Reveal key={item.slug} delay={(i % 2) * 70}>
+            <Link to={`/services/${item.slug}`} className="card-interactive group flex h-full flex-col p-6">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                <Icon name={item.icon} className="h-5 w-5" />
+              </span>
+              <h3 className="mt-5 font-display text-lg font-semibold">{item.title}</h3>
+              <p className="mt-2 leading-relaxed text-ink-500">{item.short}</p>
+              <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-brand-600">
                 Learn more <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
               </span>
             </Link>
           </Reveal>
         ))}
-        <Reveal delay={160}>
-          <Link to="/contact" className="group flex h-full flex-col justify-between rounded-2xl border border-dashed border-brand-200 bg-brand-50/50 p-7 transition hover:border-brand-400 hover:bg-brand-50">
-            <div>
-              <h3 className="font-display text-xl font-semibold text-ink-900">Not sure what you need?</h3>
-              <p className="mt-2.5 leading-relaxed text-ink-500">Tell us the problem. We’ll recommend the right mix of technology, team and budget.</p>
-            </div>
-            <span className="mt-7 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600">
-              Book a free consultation <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
-            </span>
-          </Link>
-        </Reveal>
       </div>
     </Section>
   );
@@ -238,14 +289,14 @@ function WhyUs() {
             {stats.map((s) => (
               <div key={s.label} className="border-l border-white/10 pl-5">
                 <dt className="text-sm text-ink-400">{s.label}</dt>
-                <dd className="mt-1 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">{s.value}</dd>
+                <dd className="mt-1 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl"><CountUp value={s.value} /></dd>
               </div>
             ))}
           </dl>
         </Reveal>
         <div className="grid gap-5 sm:grid-cols-2">
           {principles.map((p, i) => (
-            <Reveal key={p.title} delay={i * 80} className="rounded-2xl border border-white/10 bg-white/[0.03] p-7 transition hover:border-white/20 hover:bg-white/[0.05]">
+            <Reveal key={p.title} delay={i * 80} className="spotlight spotlight-dark rounded-2xl border border-white/10 bg-white/[0.03] p-7 transition hover:border-white/20 hover:bg-white/[0.05]">
               <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300">
                 <Icon name={p.icon} className="h-5 w-5" />
               </span>
@@ -254,6 +305,96 @@ function WhyUs() {
             </Reveal>
           ))}
         </div>
+      </div>
+    </Section>
+  );
+}
+
+const audiences = [
+  { title: 'Startups', desc: 'From idea validation and MVPs to scaling a product after product–market fit.', icon: 'Rocket' },
+  { title: 'Businesses', desc: 'Websites, internal tools, automation and AI that cut costs and win customers.', icon: 'BarChart3' },
+  { title: 'Schools & colleges', desc: 'Robotics labs, educational robots and digital platforms for institutions.', icon: 'Cpu' },
+  { title: 'Agencies & tech companies', desc: 'White-label delivery and dedicated teams when you need extra capacity.', icon: 'Layers' },
+];
+
+function Audiences() {
+  return (
+    <Section className="border-b border-ink-100">
+      <SectionHeader align="center" eyebrow="Who we work with" title="Built for teams of every size." />
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {audiences.map((a, i) => (
+          <Reveal key={a.title} delay={i * 80} className="card-interactive p-7">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600 to-cyan-500 text-white shadow-[0_8px_20px_-8px_rgba(31,69,236,0.7)]">
+              <Icon name={a.icon} className="h-5 w-5" />
+            </span>
+            <h3 className="mt-5 font-display text-lg font-semibold">{a.title}</h3>
+            <p className="mt-2 leading-relaxed text-ink-500">{a.desc}</p>
+          </Reveal>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+function CircuitVisual() {
+  const nodes = [[60, 60], [200, 40], [320, 110], [120, 190], [260, 230], [360, 300], [80, 320], [200, 330]];
+  const paths = [
+    'M60 60 H140 V40 H200', 'M200 40 V110 H320', 'M60 60 V190 H120', 'M120 190 H200 V230 H260',
+    'M320 110 V230 H260', 'M260 230 V300 H360', 'M120 190 V320 H80', 'M80 320 H200 V330',
+  ];
+  return (
+    <div className="relative mx-auto aspect-square w-full max-w-[440px]" aria-hidden="true">
+      <div className="absolute inset-8 rounded-full bg-brand-600/25 blur-[80px]" />
+      <svg viewBox="0 0 420 380" className="relative h-full w-full">
+        <defs>
+          <linearGradient id="trace-g" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stopColor="#5b86ff" />
+            <stop offset="1" stopColor="#22d3ee" />
+          </linearGradient>
+        </defs>
+        {paths.map((d) => <path key={d} d={d} stroke="rgba(143,177,255,0.18)" strokeWidth="2" fill="none" />)}
+        {paths.map((d, i) => <path key={`t-${d}`} d={d} className="trace" style={{ animationDelay: `${i * -0.4}s` }} stroke="url(#trace-g)" strokeWidth="2.5" strokeLinecap="round" fill="none" />)}
+        {nodes.map(([x, y], i) => (
+          <g key={`${x}-${y}`}>
+            <circle cx={x} cy={y} r="11" fill="#0f1426" stroke="rgba(143,177,255,0.35)" />
+            <circle cx={x} cy={y} r="4.5" fill="#5b86ff" className="pulse-node" style={{ animationDelay: `${i * 0.3}s` }} />
+          </g>
+        ))}
+        <rect x="150" y="120" width="120" height="90" rx="16" fill="#0f1426" stroke="url(#trace-g)" strokeWidth="2" />
+        <text x="210" y="160" textAnchor="middle" fill="#ffffff" fontFamily="Inter Tight, sans-serif" fontSize="15" fontWeight="700">CONTROL</text>
+        <text x="210" y="182" textAnchor="middle" fill="#8fb1ff" fontFamily="Inter, sans-serif" fontSize="11">sensors · vision · AI</text>
+      </svg>
+    </div>
+  );
+}
+
+function RoboticsBand() {
+  const points = ['Robot design, architecture and prototyping', 'Embedded firmware and sensor integration', 'Computer vision and autonomous navigation', 'Educational robots and robotics labs'];
+  return (
+    <Section dark className="relative overflow-hidden">
+      <div className="bg-grid pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_at_70%_50%,#000_20%,transparent_70%)]" aria-hidden="true" />
+      <div className="relative grid items-center gap-14 lg:grid-cols-2">
+        <Reveal>
+          <p className="eyebrow eyebrow-dark mb-4">Robotics &amp; IoT</p>
+          <h2 className="h-section text-white">Software that moves in the real world.</h2>
+          <p className="mt-6 text-lg leading-relaxed text-ink-300">
+            Beyond software, we design custom robots and connected devices end to end — and make robotics practical and affordable for schools, colleges, research teams and small businesses.
+          </p>
+          <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+            {points.map((t) => (
+              <li key={t} className="flex items-start gap-2.5 text-ink-200">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" aria-hidden="true" /> {t}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <Button to="/services/robotics-iot" arrow>Explore robotics</Button>
+            <Button to="/contact?service=Robotics%20%26%20IoT" variant="ghostDark">Plan a robotics project</Button>
+          </div>
+        </Reveal>
+        <Reveal delay={120}>
+          <CircuitVisual />
+        </Reveal>
       </div>
     </Section>
   );
@@ -385,9 +526,11 @@ export default function Home() {
     <>
       <Hero />
       <TechStrip />
-      <ServicesGrid />
+      <ServicesExplorer />
       <WhyUs />
       <Process />
+      <RoboticsBand />
+      <Audiences />
       <ProductsPreview />
       <WorkPreview />
       <Engagement />

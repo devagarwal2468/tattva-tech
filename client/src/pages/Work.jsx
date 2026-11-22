@@ -30,6 +30,7 @@ export default function Work() {
         breadcrumbs={[{ label: 'Work' }]}
       />
       <Section>
+        <h2 className="sr-only">Projects</h2>
         {loading && <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"><CardSkeletons /></div>}
         {!loading && error && <ErrorState onRetry={reload} />}
         {!loading && !error && projects.length === 0 && (

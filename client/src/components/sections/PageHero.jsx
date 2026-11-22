@@ -7,8 +7,11 @@ export default function PageHero({ eyebrow, title, lead, breadcrumbs = [], child
   return (
     <section className="dark-surface relative overflow-hidden bg-ink-950 pb-20 pt-36 sm:pb-24 sm:pt-44">
       <div className="bg-grid mask-fade-b pointer-events-none absolute inset-0" aria-hidden="true" />
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-brand-600/25 blur-[120px]" aria-hidden="true" />
-      <div className="pointer-events-none absolute -right-20 top-20 h-72 w-72 rounded-full bg-cyan-400/10 blur-[90px]" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="aurora aurora-1 -top-52 left-[15%] h-[460px] w-[640px] bg-brand-600/30" />
+        <div className="aurora aurora-2 -right-24 top-10 h-[360px] w-[420px] bg-cyan-500/15" />
+      </div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden="true" />
       <div className="container-site relative">
         {breadcrumbs.length > 0 && (
           <nav aria-label="Breadcrumb" className="mb-8">

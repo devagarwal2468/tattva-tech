@@ -136,3 +136,117 @@
     transform: none;
   }
 }
+
+/* ---------- Motion system ---------- */
+
+/* Cursor spotlight (Linear-style): a soft light that follows the pointer inside a card. */
+.spotlight,
+.card-interactive {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before,
+.card-interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(52, 97, 251, 0.10), transparent 45%);
+}
+.spotlight-dark::before {
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(120, 160, 255, 0.16), transparent 45%);
+}
+.spotlight:hover::before,
+.card-interactive:hover::before {
+  opacity: 1;
+}
+
+/* Aurora light used behind dark heroes. Only transform/opacity animate (GPU friendly). */
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+  pointer-events: none;
+}
+.aurora-1 { animation: aurora-a 18s ease-in-out infinite alternate; }
+.aurora-2 { animation: aurora-b 22s ease-in-out infinite alternate; }
+.aurora-3 { animation: aurora-c 26s ease-in-out infinite alternate; }
+@keyframes aurora-a { from { transform: translate3d(-8%, -4%, 0) scale(1); } to { transform: translate3d(10%, 6%, 0) scale(1.15); } }
+@keyframes aurora-b { from { transform: translate3d(6%, 4%, 0) scale(1.1); } to { transform: translate3d(-10%, -6%, 0) scale(0.95); } }
+@keyframes aurora-c { from { transform: translate3d(0, 8%, 0) scale(0.9); } to { transform: translate3d(-6%, -8%, 0) scale(1.1); } }
+
+/* Word-by-word headline reveal */
+.word-reveal > span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.45em);
+  filter: blur(6px);
+  animation: word-in 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: calc(var(--i) * 70ms + 80ms);
+}
+@keyframes word-in {
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+/* Route change transition */
+.page-enter {
+  animation: page-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes page-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Button sheen */
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+}
+.btn-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%) skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transition: transform 0.7s ease;
+}
+.btn-sheen:hover::after {
+  transform: translateX(120%) skewX(-20deg);
+}
+
+/* Explorer panel crossfade */
+.panel-in {
+  animation: panel-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-reveal > span { opacity: 1; transform: none; filter: none; }
+  .aurora { animation: none !important; }
+}
+
+/* Animated circuit traces for the robotics band */
+.trace {
+  stroke-dasharray: 6 10;
+  animation: trace-flow 3.2s linear infinite;
+}
+@keyframes trace-flow {
+  to { stroke-dashoffset: -64; }
+}
+.pulse-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: node-pulse 2.4s ease-in-out infinite;
+}
+@keyframes node-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.35); }
+}

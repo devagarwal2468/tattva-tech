@@ -5,6 +5,7 @@ import CtaBand from '../components/sections/CtaBand';
 import Reveal from '../components/ui/Reveal';
 import Icon from '../components/ui/Icon';
 import Button from '../components/ui/Button';
+import CountUp from '../components/ui/CountUp';
 import { Section, SectionHeader } from '../components/ui/Section';
 import { useSeo } from '../lib/seo';
 import { company, leadership, offices, principles, socials, stats } from '../content/site';
@@ -48,7 +49,7 @@ export default function About() {
         <dl className="container-site grid grid-cols-2 divide-ink-100 py-10 md:grid-cols-4 md:divide-x">
           {stats.map((s) => (
             <div key={s.label} className="px-2 py-4 text-center md:px-6">
-              <dd className="font-display text-4xl font-bold tracking-tight text-ink-900 sm:text-5xl">{s.value}</dd>
+              <dd className="font-display text-4xl font-bold tracking-tight text-ink-900 sm:text-5xl"><CountUp value={s.value} /></dd>
               <dt className="mt-2 text-sm text-ink-500">{s.label}</dt>
             </div>
           ))}

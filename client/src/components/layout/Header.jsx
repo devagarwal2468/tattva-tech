@@ -9,13 +9,23 @@ import { services } from '../../content/services';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const closeTimer = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 12);
+      // Hide while reading downwards, reveal as soon as the user scrolls up.
+      if (Math.abs(y - lastY) > 6) {
+        setHidden(y > lastY && y > 400);
+        lastY = y;
+      }
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -61,7 +71,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${hidden && !mobileOpen && !menuOpen ? '-translate-y-full' : 'translate-y-0'} ${
         solid ? 'border-b border-ink-100 bg-white/85 shadow-[0_1px_12px_rgba(15,20,38,0.05)] backdrop-blur-xl' : 'border-b border-transparent bg-transparent'
       }`}
     >
@@ -69,7 +79,7 @@ export default function Header() {
         Skip to content
       </a>
       <div className="container-site flex h-[72px] items-center justify-between gap-6">
-        <Link to="/" aria-label="Tattva Tech home" className="shrink-0">
+        <Link to="/" className="shrink-0">
           <Logo dark={!solid} />
         </Link>
 
@@ -155,7 +165,7 @@ export default function Header() {
         }`}
       >
         <nav aria-label="Mobile" className="container-site flex flex-col py-6">
-          <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-400">Services</p>
+          <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Services</p>
           <div className="grid grid-cols-1 gap-1 pb-4 sm:grid-cols-2">
             {services.map((s) => (
               <Link key={s.slug} to={`/services/${s.slug}`} className="flex items-center gap-3 rounded-xl px-1 py-2.5 text-[0.95rem] font-medium text-ink-800 hover:bg-ink-50">

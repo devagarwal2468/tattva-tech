@@ -3,9 +3,11 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import WhatsAppButton from './WhatsAppButton';
+import { useSpotlight } from '../../lib/useSpotlight';
 
 export default function PublicLayout() {
   const { pathname, hash } = useLocation();
+  useSpotlight();
 
   // Scroll to top on page change (or to an anchor when the URL has a hash).
   useEffect(() => {
@@ -23,7 +25,9 @@ export default function PublicLayout() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main id="main" className="flex-1">
-        <Outlet />
+        <div key={pathname} className="page-enter">
+          <Outlet />
+        </div>
       </main>
       <Footer />
       <WhatsAppButton />

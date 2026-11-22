@@ -42,7 +42,7 @@ export default function Services() {
                     <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                       <Icon name={s.icon} className="h-6 w-6" />
                     </span>
-                    <span className="font-display text-sm font-semibold text-ink-300">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="font-display text-sm font-semibold text-ink-500">{String(i + 1).padStart(2, '0')}</span>
                   </div>
                   <h2 className="mt-6 font-display text-2xl font-semibold sm:text-3xl">{s.title}</h2>
                   <p className="mt-3 text-lg leading-relaxed text-ink-500">{s.overview[0]}</p>
@@ -51,7 +51,7 @@ export default function Services() {
                   </Link>
                 </div>
                 <div className="rounded-2xl bg-ink-50/70 p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-400">What we deliver</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">What we deliver</p>
                   <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                     {s.deliverables.map((d) => (
                       <li key={d} className="flex items-start gap-2.5 text-[0.95rem] text-ink-700">

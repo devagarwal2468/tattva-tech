@@ -91,7 +91,7 @@ function ContactForm() {
   const field = (name, label, props = {}, optional = false) => (
     <div>
       <label htmlFor={`f-${name}`} className="field-label">
-        {label} {optional && <span className="font-normal text-ink-400">(optional)</span>}
+        {label} {optional && <span className="font-normal text-ink-500">(optional)</span>}
       </label>
       <input
         id={`f-${name}`}
@@ -117,7 +117,7 @@ function ContactForm() {
         {field('phone', 'Phone / WhatsApp', { type: 'tel', autoComplete: 'tel', maxLength: 20 }, true)}
         {field('company', 'Company', { autoComplete: 'organization', maxLength: 120 }, true)}
         <div>
-          <label htmlFor="f-service" className="field-label">Service <span className="font-normal text-ink-400">(optional)</span></label>
+          <label htmlFor="f-service" className="field-label">Service <span className="font-normal text-ink-500">(optional)</span></label>
           <select id="f-service" name="service" value={values.service} onChange={onChange} className="field">
             <option value="">Select a service</option>
             {services.map((s) => <option key={s.slug}>{s.title}</option>)}
@@ -125,7 +125,7 @@ function ContactForm() {
           </select>
         </div>
         <div>
-          <label htmlFor="f-budget" className="field-label">Budget <span className="font-normal text-ink-400">(optional)</span></label>
+          <label htmlFor="f-budget" className="field-label">Budget <span className="font-normal text-ink-500">(optional)</span></label>
           <select id="f-budget" name="budget" value={values.budget} onChange={onChange} className="field">
             <option value="">Select a range</option>
             {budgets.map((b) => <option key={b}>{b}</option>)}
@@ -159,7 +159,7 @@ function ContactForm() {
       )}
 
       <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-ink-400">
+        <p className="text-sm text-ink-500">
           By submitting, you agree to our <Link to="/privacy" className="underline hover:text-ink-700">privacy policy</Link>.
         </p>
         <button
@@ -212,7 +212,7 @@ export default function Contact() {
                   <ChannelIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <span className="min-w-0">
-                  <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">{label}</span>
+                  <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-500">{label}</span>
                   <span className="mt-0.5 block break-all font-semibold text-ink-900">{value}</span>
                 </span>
               </a>

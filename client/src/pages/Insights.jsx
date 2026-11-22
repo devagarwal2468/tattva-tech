@@ -27,6 +27,7 @@ export default function Insights() {
         breadcrumbs={[{ label: 'Insights' }]}
       />
       <Section>
+        <h2 className="sr-only">Articles</h2>
         {loading && <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"><CardSkeletons count={3} className="h-[380px]" /></div>}
         {!loading && error && <ErrorState onRetry={reload} />}
         {!loading && !error && insights.length === 0 && (

@@ -14,15 +14,15 @@ export default function ProjectCard({ project }) {
         <Visual icon={categoryIcon[category] || 'Code2'} seed={title} className="aspect-[16/10]" />
       )}
       <div className="flex flex-1 flex-col p-6 sm:p-7">
-        <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">
+        <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink-500">
           <span className="text-brand-600">{category}</span>
           {clientName && <><span aria-hidden="true">•</span><span>{clientName}</span></>}
         </div>
+        {impactMetric && impactMetric !== 'High Impact' && (
+          <p className="mt-4 font-display text-2xl font-bold tracking-tight text-gradient-dark">{impactMetric}</p>
+        )}
         <h3 className="mt-3 font-display text-xl font-semibold text-ink-900">{title}</h3>
         <p className="mt-2 line-clamp-4 leading-relaxed text-ink-500">{description}</p>
-        {impactMetric && impactMetric !== 'High Impact' && (
-          <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-700">{impactMetric}</p>
-        )}
         {technologies.length > 0 && (
           <div className="mt-5 flex flex-wrap gap-1.5">
             {technologies.slice(0, 5).map((t) => <span key={t} className="chip">{t}</span>)}

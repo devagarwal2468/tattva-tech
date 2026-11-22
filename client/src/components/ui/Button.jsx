@@ -6,7 +6,7 @@ const base =
   'group inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60 whitespace-nowrap';
 
 const variants = {
-  primary: 'bg-brand-600 text-white shadow-[0_8px_24px_-8px_rgba(31,69,236,0.6)] hover:bg-brand-700 hover:shadow-[0_10px_28px_-8px_rgba(31,69,236,0.75)]',
+  primary: 'btn-sheen bg-brand-600 text-white shadow-[0_8px_24px_-8px_rgba(31,69,236,0.6)] hover:bg-brand-700 hover:shadow-[0_10px_28px_-8px_rgba(31,69,236,0.75)]',
   dark: 'bg-ink-900 text-white hover:bg-ink-800',
   secondary: 'border border-ink-200 bg-white text-ink-800 hover:border-ink-300 hover:bg-ink-50',
   ghostDark: 'border border-white/15 bg-white/5 text-white backdrop-blur hover:border-white/30 hover:bg-white/10',
