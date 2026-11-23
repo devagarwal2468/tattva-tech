@@ -118,3 +118,19 @@ Verification after all fixes: API tests **30/30**, `qa/e2e.mjs` **18/18**, `qa/s
 - Local preview running: http://localhost:5173 (also http://192.168.50.1:5173 and http://172.30.3.192:5173), local admin admin@local.test / localpass123 (in-memory DB, local only).
 - Verified: setting a product's `productUrl` in the admin panel shows a "Visit <name>" button on that card; others keep "Request early access" (tested with a temporary example URL, then reverted).
 - Waiting on owner: review of the local site, product names + live URLs, permission to push.
+
+### 2026-11-23 — Visual redesign v2 ("calm & precise")
+Owner feedback: old UI looked bad, no visuals; wants professional, minimalistic, simple, elegant colours, with real vector/PNG imagery; Home most important.
+
+**Direction:** light ivory canvas (#f8f7f4), deep navy text, logo blue as a sparing accent, Instrument Serif italics for emphasis, lots of whitespace, rounded cards with soft shadows. Dark, glow-heavy sections removed.
+
+**Visual assets (all free for commercial use, every licence checked at the source — see `design-assets/README.md`, `/credits` page):**
+- 13 3D icons from 3dicons V1 (CC0 confirmed on each icon page), background removed + recoloured to brand blue.
+- 26 unDraw illustrations recoloured to brand blue.
+- 8 CC0 photos (Wikimedia Commons robotics/drone, StockSnap workspace/design/analytics, NASA electronics). Rawpixel images with visible watermarks were rejected; Unsplash/Pexels blocked automated access, so not used.
+
+**Pages rebuilt:** Home (hero with illustration + floating 3D objects, service cards with illustrations, robotics photo showcase, principles with 3D icons, process with serif numerals, audiences, FAQ), Services (zig-zag rows), Service detail, About, Contact, Careers, Products, Work, Insights, 404, new `/credits`. Header/footer light; mobile drawer kept outside header.
+
+**Bugs found & fixed while verifying:** 3D icons had an opaque white square (source files are RGB) → background keyed out; gear hole + one over-keyed pie-chart area fixed; robotics checklist covered the photo on phones → moved below; count-up test was too weak (didn't check final values) → strengthened; LCP was the hero paragraph held at opacity 0 → transform-only animation; fonts self-hosted (no Google requests).
+
+**Verified:** `qa/shots.mjs` 26/26 (13 routes × desktop/mobile, 0 console errors, 0 broken images, 0 sideways scroll); `qa/e2e.mjs` 18/18 (incl. 52 home images load, service card navigation, count-up final values); API 33/33; Lighthouse mobile: Home 90/100/100/100, Services 93/100/100/100, Contact 90/100/100/100, About 94/100/100/100 (Perf/A11y/BP/SEO).

@@ -165,7 +165,7 @@ function ContactForm() {
         <button
           type="submit"
           disabled={status === 'sending'}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 font-semibold text-white shadow-[0_8px_24px_-8px_rgba(31,69,236,0.6)] transition hover:bg-brand-700 disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-900 px-7 py-3.5 font-medium text-white shadow-[0_10px_30px_-12px_rgba(15,20,38,0.6)] transition hover:bg-brand-700 disabled:opacity-60"
         >
           {status === 'sending' ? <><Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Sending…</> : 'Send message'}
         </button>
@@ -190,7 +190,8 @@ export default function Contact() {
     <>
       <PageHero
         eyebrow="Contact"
-        title="Let’s build something great together."
+        title={<>Let’s build something <em className="accent">great together.</em></>}
+        illus="/assets/illus/online-meetings.svg"
         lead="Share a few details about your idea. We’ll review it and get back to you with questions, options and next steps."
         breadcrumbs={[{ label: 'Contact' }]}
       />
@@ -217,12 +218,12 @@ export default function Contact() {
                 </span>
               </a>
             ))}
-            <div className="dark-surface rounded-2xl bg-ink-950 p-7 text-ink-300">
-              <h2 className="font-display text-lg font-semibold text-white">What happens next?</h2>
+            <div className="tile-soft border border-line p-7 text-ink-600">
+              <h2 className="font-serif text-2xl italic text-ink-900">What happens next?</h2>
               <ol className="mt-5 space-y-4 text-[0.95rem]">
                 {['We review your message and reach out to clarify goals.', 'A short call to understand scope, timeline and budget.', 'You receive a written proposal with a clear plan and estimate.'].map((t, i) => (
                   <li key={t} className="flex gap-3">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-500/20 text-xs font-bold text-brand-200">{i + 1}</span>
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-xs font-semibold text-brand-700 shadow-card">{i + 1}</span>
                     {t}
                   </li>
                 ))}
@@ -232,8 +233,8 @@ export default function Contact() {
         </div>
       </Section>
 
-      <Section className="bg-ink-50/60">
-        <h2 className="h-section">Our offices</h2>
+      <Section className="border-t border-line bg-white">
+        <h2 className="h-section">Our <em className="accent">offices</em></h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {offices.map((o, i) => (
             <Reveal key={o.city} delay={i * 80} className="card overflow-hidden">

@@ -18,8 +18,8 @@ export default function InsightArticle() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center bg-ink-950" role="status" aria-label="Loading article">
-        <span className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-brand-400" />
+      <div className="flex min-h-[70vh] items-center justify-center" role="status" aria-label="Loading article">
+        <span className="h-8 w-8 animate-spin rounded-full border-2 border-ink-200 border-t-brand-600" />
       </div>
     );
   }

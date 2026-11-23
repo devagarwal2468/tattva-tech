@@ -1,26 +1,20 @@
 import React from 'react';
-import Icon from '../ui/Icon';
 
-const palettes = [
-  'from-brand-600 via-brand-500 to-cyan-400',
-  'from-ink-900 via-brand-900 to-brand-600',
-  'from-indigo-600 via-brand-600 to-sky-400',
-  'from-sky-600 via-cyan-500 to-teal-400',
-];
+// Blue-clay 3D icons (CC0, see design-assets/credits.json) used as fallback artwork.
+const art = {
+  Globe: 'computer', Smartphone: 'mobile', Layers: 'cube', Sparkles: 'chat', Code2: 'computer', Bot: 'gear',
+  Send: 'chat', Users: 'puzzle', BarChart3: 'chart', Cpu: 'gear', Box: 'cube', Rocket: 'rocket', Mail: 'chat',
+};
 
-/** Abstract branded artwork used when a CMS item has no cover image. */
-export default function Visual({ icon = 'Box', seed = '', className = '', label }) {
-  const idx = [...seed].reduce((a, c) => a + c.charCodeAt(0), 0) % palettes.length;
+/** Soft branded artwork used when a CMS item has no cover image. */
+export default function Visual({ icon = 'Box', className = '' }) {
+  const src = `/assets/3d/${art[icon] || 'cube'}.webp`;
   return (
-    <div className={`relative overflow-hidden bg-gradient-to-br ${palettes[idx]} ${className}`} aria-hidden={label ? undefined : 'true'} role={label ? 'img' : undefined} aria-label={label}>
-      <div className="bg-grid absolute inset-0 opacity-60" />
-      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/15 blur-2xl" />
-      <div className="absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-cyan-300/20 blur-2xl" />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/25 bg-white/10 text-white shadow-lg backdrop-blur">
-          <Icon name={icon} className="h-8 w-8" />
-        </span>
-      </div>
+    <div className={`tile-soft relative flex items-center justify-center overflow-hidden ${className}`} aria-hidden="true">
+      <div className="dots-bg absolute inset-0 opacity-40" />
+      <div className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-violet-200/60 blur-3xl" />
+      <div className="absolute -bottom-12 -left-8 h-44 w-44 rounded-full bg-brand-200/60 blur-3xl" />
+      <img src={src} alt="" loading="lazy" className="relative h-28 w-28 object-contain drop-shadow-[0_20px_24px_rgba(23,40,150,0.3)] transition-transform duration-700 group-hover:-translate-y-1.5 group-hover:rotate-[-4deg]" />
     </div>
   );
 }

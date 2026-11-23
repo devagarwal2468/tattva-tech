@@ -143,21 +143,25 @@ export const processSteps = [
 export const principles = [
   {
     title: 'Product thinking first',
+    icon3d: '/assets/3d/target.webp',
     desc: 'We start from the business outcome and the user, not from the technology. Every feature has to earn its place.',
     icon: 'Target',
   },
   {
     title: 'Transparent by default',
+    icon3d: '/assets/3d/chat.webp',
     desc: 'Clear estimates, weekly demos, shared boards and direct access to the people building your product.',
     icon: 'MessagesSquare',
   },
   {
     title: 'One connected team',
+    icon3d: '/assets/3d/puzzle.webp',
     desc: 'Engineering, AI, robotics, design and marketing under one roof — fewer hand-offs, faster delivery.',
     icon: 'Users',
   },
   {
     title: 'With you after launch',
+    icon3d: '/assets/3d/shield.webp',
     desc: 'We maintain, monitor and improve what we ship. Launch is the beginning of the relationship, not the end.',
     icon: 'LifeBuoy',
   },

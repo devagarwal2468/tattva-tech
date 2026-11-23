@@ -5,11 +5,48 @@ import PageHero from '../components/sections/PageHero';
 import CtaBand from '../components/sections/CtaBand';
 import Button from '../components/ui/Button';
 import Reveal from '../components/ui/Reveal';
-import Icon from '../components/ui/Icon';
 import { Section, SectionHeader } from '../components/ui/Section';
 import { useSeo } from '../lib/seo';
 import { services } from '../content/services';
 import { processSteps } from '../content/site';
+
+function ServiceRow({ s, index }) {
+  const flip = index % 2 === 1;
+  return (
+    <Reveal>
+      <article className="grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
+        <Link to={`/services/${s.slug}`} className={`group block ${flip ? 'lg:order-2' : ''}`} aria-label={`${s.title} — details`}>
+          {s.photo ? (
+            <div className="overflow-hidden rounded-[2rem] border border-line shadow-card">
+              <img src={s.photo} alt="Robotic arm in an automation lab" loading="lazy" className="zoom-img aspect-[4/3] w-full object-cover" />
+            </div>
+          ) : (
+            <div className="tile-soft relative flex aspect-[4/3] items-center justify-center border border-line p-10 sm:p-14">
+              <img src={s.illus} alt="" loading="lazy" className="zoom-img h-full w-full object-contain" />
+              <img src={s.icon3d} alt="" loading="lazy" className="float-slow absolute -top-6 right-6 h-20 w-20 drop-shadow-[0_18px_22px_rgba(23,40,150,0.3)] sm:h-24 sm:w-24" />
+            </div>
+          )}
+        </Link>
+        <div>
+          <p className="font-serif text-2xl italic text-brand-600">{String(index + 1).padStart(2, '0')}</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-[2.4rem]">{s.title}</h2>
+          <p className="lead mt-5">{s.overview[0]}</p>
+          <ul className="mt-7 grid gap-3 sm:grid-cols-2">
+            {s.deliverables.map((d) => (
+              <li key={d} className="flex items-start gap-2.5 text-[0.95rem] text-ink-700">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" /> {d}
+              </li>
+            ))}
+          </ul>
+          <Link to={`/services/${s.slug}`} className="group mt-8 inline-flex items-center gap-1.5 font-medium text-ink-900">
+            Explore {s.title}
+            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
+          </Link>
+        </div>
+      </article>
+    </Reveal>
+  );
+}
 
 export default function Services() {
   useSeo({
@@ -22,66 +59,37 @@ export default function Services() {
     <>
       <PageHero
         eyebrow="Services"
-        title="End-to-end technology solutions for modern businesses."
+        title={<>End-to-end technology, <em className="accent">thoughtfully built.</em></>}
         lead="We combine design, engineering and intelligent technology to build solutions that create real business impact — from the first idea to growth after launch."
         breadcrumbs={[{ label: 'Services' }]}
+        illus="/assets/illus/idea-process.svg"
       >
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button to="/contact" size="lg" arrow>Get a proposal</Button>
-          <Button href="#all-services" size="lg" variant="ghostDark">Browse services</Button>
+          <Button href="#all-services" size="lg" variant="secondary">Browse services</Button>
         </div>
       </PageHero>
 
-      <Section id="all-services">
-        <div className="space-y-6">
-          {services.map((s, i) => (
-            <Reveal key={s.slug}>
-              <article className="card group grid gap-8 overflow-hidden p-7 transition hover:border-brand-200 hover:shadow-card-hover sm:p-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
-                <div>
-                  <div className="flex items-center gap-4">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                      <Icon name={s.icon} className="h-6 w-6" />
-                    </span>
-                    <span className="font-display text-sm font-semibold text-ink-500">{String(i + 1).padStart(2, '0')}</span>
-                  </div>
-                  <h2 className="mt-6 font-display text-2xl font-semibold sm:text-3xl">{s.title}</h2>
-                  <p className="mt-3 text-lg leading-relaxed text-ink-500">{s.overview[0]}</p>
-                  <Link to={`/services/${s.slug}`} className="mt-6 inline-flex items-center gap-1.5 font-semibold text-brand-600 hover:text-brand-700">
-                    Explore {s.title} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
-                  </Link>
-                </div>
-                <div className="rounded-2xl bg-ink-50/70 p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">What we deliver</p>
-                  <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                    {s.deliverables.map((d) => (
-                      <li key={d} className="flex items-start gap-2.5 text-[0.95rem] text-ink-700">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" aria-hidden="true" /> {d}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </article>
-            </Reveal>
-          ))}
+      <section id="all-services" className="border-t border-line bg-white py-24 sm:py-32">
+        <div className="container-site space-y-28 sm:space-y-36">
+          {services.map((s, i) => <ServiceRow key={s.slug} s={s} index={i} />)}
         </div>
-      </Section>
+      </section>
 
-      <Section className="bg-ink-50/60">
-        <SectionHeader align="center" eyebrow="Our process" title="How we turn ideas into impact." />
-        <ol className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      <Section>
+        <SectionHeader align="center" eyebrow="Our process" title={<>How we turn ideas <em className="accent">into impact.</em></>} />
+        <ol className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-4">
           {processSteps.map((p, i) => (
-            <Reveal as="li" key={p.title} delay={i * 80} className="card p-7">
-              <span className="font-display text-sm font-bold text-brand-600">Step {i + 1}</span>
-              <h3 className="mt-3 font-display text-xl font-semibold">{p.title}</h3>
-              <p className="mt-2.5 leading-relaxed text-ink-500">{p.desc}</p>
+            <Reveal as="li" key={p.title} delay={i * 90} className="border-t border-ink-900/80 pt-7">
+              <span className="font-serif text-5xl italic text-brand-600">0{i + 1}</span>
+              <h3 className="mt-5 font-display text-xl font-semibold">{p.title}</h3>
+              <p className="mt-3 leading-relaxed text-ink-500">{p.desc}</p>
             </Reveal>
           ))}
         </ol>
       </Section>
 
-      <div className="pt-20 sm:pt-28">
-        <CtaBand />
-      </div>
+      <CtaBand />
     </>
   );
 }

@@ -27,7 +27,8 @@ export default function Products() {
     <>
       <PageHero
         eyebrow="Products"
-        title="Products for a smarter way to work."
+        title={<>Products for a <em className="accent">smarter way</em> to work.</>}
+        illus="/assets/illus/dashboard.svg"
         lead="Alongside client work, we are building our own SaaS products — tools for outreach, sales, AI automation and analytics."
         breadcrumbs={[{ label: 'Products' }]}
       />
@@ -38,6 +39,7 @@ export default function Products() {
         {!loading && error && <ErrorState onRetry={reload} />}
         {!loading && !error && products.length === 0 && (
           <EmptyState
+            illus="/assets/illus/startup-growth.svg"
             title="New products are on the way."
             desc="We are preparing our product line-up. Want early access or a demo? Get in touch."
             action={<Button to="/contact" arrow>Request early access</Button>}
@@ -79,7 +81,7 @@ export default function Products() {
         )}
       </Section>
 
-      <CtaBand title="Need a custom product built?" lead="We build SaaS products for clients too — from MVP to scale." />
+      <CtaBand title={<>Need a <em className="accent">custom product</em> built?</>} lead="We build SaaS products for clients too — from MVP to scale." />
     </>
   );
 }

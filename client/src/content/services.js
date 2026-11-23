@@ -1,8 +1,11 @@
-// Service catalogue. `icon` is a lucide-react icon name (see components/ui/Icon.jsx).
+// Service catalogue. `icon` is a lucide-react icon name (see components/ui/Icon.jsx);
+// `icon3d`, `illus` and `photo` point to licensed assets in public/assets (see design-assets/credits.json).
 
 export const services = [
   {
     slug: 'web-development',
+    icon3d: '/assets/3d/computer.webp',
+    illus: '/assets/illus/building-a-website.svg',
     title: 'Web Development',
     short: 'Fast, secure websites and web applications built to grow with your business.',
     icon: 'Globe',
@@ -23,6 +26,8 @@ export const services = [
   },
   {
     slug: 'mobile-app-development',
+    icon3d: '/assets/3d/mobile.webp',
+    illus: '/assets/illus/mobile-application.svg',
     title: 'Mobile App Development',
     short: 'Android and iOS apps with polished UX, offline support and reliable back-ends.',
     icon: 'Smartphone',
@@ -43,6 +48,8 @@ export const services = [
   },
   {
     slug: 'ai-automation',
+    icon3d: '/assets/3d/chat.webp',
+    illus: '/assets/illus/artificial-intelligence.svg',
     title: 'AI & Automation',
     short: 'AI agents, chatbots and workflow automation that remove repetitive work.',
     icon: 'Sparkles',
@@ -63,6 +70,8 @@ export const services = [
   },
   {
     slug: 'robotics-iot',
+    icon3d: '/assets/3d/gear.webp',
+    photo: '/assets/photos/robot-cleanroom.webp',
     title: 'Robotics & IoT',
     short: 'Custom robots, embedded systems and connected devices — from prototype to deployment.',
     icon: 'Bot',
@@ -83,6 +92,8 @@ export const services = [
   },
   {
     slug: 'ui-ux-design',
+    icon3d: '/assets/3d/palette.webp',
+    illus: '/assets/illus/ux-design.svg',
     title: 'UI/UX & Brand Design',
     short: 'Research-led product design, design systems and brand identities.',
     icon: 'PenTool',
@@ -103,6 +114,8 @@ export const services = [
   },
   {
     slug: 'saas-development',
+    icon3d: '/assets/3d/cube.webp',
+    illus: '/assets/illus/dashboard.svg',
     title: 'SaaS Product Development',
     short: 'Multi-tenant SaaS platforms with billing, roles and analytics built in.',
     icon: 'Layers',
@@ -123,6 +136,8 @@ export const services = [
   },
   {
     slug: 'digital-growth',
+    icon3d: '/assets/3d/chart.webp',
+    illus: '/assets/illus/growth-analytics.svg',
     title: 'Digital Growth',
     short: 'SEO, AEO, GEO, content and performance marketing that bring in qualified leads.',
     icon: 'TrendingUp',

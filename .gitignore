@@ -38,3 +38,12 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Raw downloaded design candidates (not redistributed; only the optimised files in
+# client/public/assets ship with the site). Licences: design-assets/credits.json
+design-assets/3dicons-candidates/
+design-assets/undraw-candidates/
+design-assets/undraw-blue/
+design-assets/photos-candidates/
+design-assets/photos-wikimedia/
+qa/out/

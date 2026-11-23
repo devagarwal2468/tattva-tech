@@ -1,5 +1,5 @@
 // End-to-end checks: contact form validation + submission, admin login, enquiry visible,
-// legacy hash redirect, header auto-hide, services explorer, count-up, spotlight, route change.
+// legacy hash redirect, header auto-hide, home visuals, service links, count-up, spotlight, route change.
 import { BASE, OUT, launch, collectErrors, wait } from './lib.mjs';
 
 const results = [];
@@ -46,14 +46,29 @@ await p.evaluate(() => window.scrollTo(0, 1500)); await wait(500);
 check('header hides on scroll down', await p.$eval('header', (h) => h.className.includes('-translate-y-full')));
 await p.evaluate(() => window.scrollTo(0, 1300)); await wait(500);
 check('header returns on scroll up', await p.$eval('header', (h) => !h.className.includes('-translate-y-full')));
-const tab = await p.$('#svc-tab-3'); await tab.scrollIntoView(); await wait(600); await tab.hover(); await wait(600);
-check('explorer switches on hover', (await p.$eval('#svc-tab-3', (e) => e.getAttribute('aria-selected'))) === 'true');
-await p.focus('#svc-tab-3'); await p.keyboard.press('ArrowDown'); await wait(300);
-check('explorer arrow-key navigation', (await p.$eval('#svc-tab-4', (e) => e.getAttribute('aria-selected'))) === 'true');
-await p.screenshot({ path: `${OUT}explorer.png` });
-await p.evaluate(() => document.querySelector('dl')?.scrollIntoView({ block: 'center' })); await wait(2200);
-const stats = await p.$$eval('dl dd', (els) => els.map((e) => e.textContent));
-check('count-up reaches final values', stats.every((t) => /\d/.test(t)), stats.join(', '));
+const visuals = await p.evaluate(async () => {
+  const imgs = [...document.querySelectorAll('img[src^="/assets/"]')];
+  imgs.forEach((i) => i.scrollIntoView());
+  await new Promise((r) => setTimeout(r, 1500));
+  return { total: imgs.length, broken: imgs.filter((i) => i.complete && i.naturalWidth === 0).map((i) => i.getAttribute('src')) };
+});
+check('home visuals (3D icons, illustrations, photos) load', visuals.total >= 20 && visuals.broken.length === 0, `${visuals.total} images, broken: ${visuals.broken.join(',') || 'none'}`);
+await p.evaluate(() => window.scrollTo(0, 0)); await wait(400);
+await p.evaluate(() => document.querySelector('main a[href="/services/ai-automation"]').click()); await wait(900);
+check('service card opens its page', p.url().endsWith('/services/ai-automation') && (await p.title()).startsWith('AI & Automation'), p.url());
+await p.goto(`${BASE}/`, { waitUntil: 'networkidle0' }); await wait(800);
+const countUps = await p.evaluate(async () => {
+  const out = [];
+  for (const dd of document.querySelectorAll('dl dd')) {
+    dd.scrollIntoView({ block: 'center' });
+    await new Promise((r) => setTimeout(r, 1700));
+    const finalText = dd.querySelector('.sr-only')?.textContent ?? dd.textContent;
+    const shown = dd.querySelector('[aria-hidden="true"]')?.textContent ?? dd.textContent;
+    out.push({ finalText, shown });
+  }
+  return out;
+});
+check('count-up stops at the real numbers', countUps.length > 0 && countUps.every((c) => c.shown === c.finalText), countUps.map((c) => `${c.shown}/${c.finalText}`).join(' '));
 await p.evaluate(() => [...document.querySelectorAll('.card-interactive')].find((e) => e.offsetParent !== null)?.setAttribute('data-qa', 'card'));
 const card = await p.$('[data-qa=card]'); await card.scrollIntoView(); await wait(300);
 const box = await card.boundingBox(); await p.mouse.move(box.x + 40, box.y + 30); await wait(200);

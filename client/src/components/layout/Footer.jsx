@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { Linkedin, Instagram, ArrowUpRight } from 'lucide-react';
 import Logo from '../ui/Logo';
 import { company, offices, socials } from '../../content/site';
 import { services } from '../../content/services';
@@ -11,8 +11,8 @@ const columns = [
   {
     title: 'Company',
     links: [
-      { label: 'About us', to: '/about' },
-      { label: 'Our work', to: '/work' },
+      { label: 'About', to: '/about' },
+      { label: 'Work', to: '/work' },
       { label: 'Products', to: '/products' },
       { label: 'Insights', to: '/insights' },
       { label: 'Careers', to: '/careers' },
@@ -28,16 +28,15 @@ const columns = [
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="dark-surface relative overflow-hidden bg-ink-950 text-ink-400">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-500/40 to-transparent" />
-      <div className="container-site py-16 sm:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr]">
+    <footer className="relative overflow-hidden border-t border-line bg-white">
+      <div className="container-site pt-20 sm:pt-24">
+        <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1.1fr]">
           <div className="max-w-sm">
-            <Logo dark />
-            <p className="mt-5 text-[0.95rem] leading-relaxed">
-              Software, AI, robotics and digital solutions for startups, businesses and institutions — built to create real impact.
+            <Logo />
+            <p className="mt-6 text-[0.98rem] leading-relaxed text-ink-500">
+              Software, AI, robotics and design — built with care for startups, businesses and institutions.
             </p>
-            <div className="mt-6 flex gap-2">
+            <div className="mt-7 flex gap-2">
               {socials.map(({ label, href }) => {
                 const SocialIcon = socialIcons[label];
                 return (
@@ -47,9 +46,9 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Tattva Tech on ${label}`}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-ink-300 transition hover:border-white/30 hover:text-white"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink-500 transition hover:border-ink-300 hover:text-ink-900"
                   >
-                    {SocialIcon && <SocialIcon className="h-[18px] w-[18px]" />}
+                    {SocialIcon && <SocialIcon className="h-[17px] w-[17px]" />}
                   </a>
                 );
               })}
@@ -58,11 +57,11 @@ export default function Footer() {
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h2 className="font-sans text-sm font-semibold uppercase tracking-[0.12em] text-white">{col.title}</h2>
-              <ul className="mt-5 space-y-3">
+              <h2 className="font-sans text-xs font-medium uppercase tracking-[0.18em] text-ink-500">{col.title}</h2>
+              <ul className="mt-6 space-y-3">
                 {col.links.map((l) => (
                   <li key={l.to}>
-                    <Link to={l.to} className="text-[0.95rem] transition hover:text-white">
+                    <Link to={l.to} className="text-[0.95rem] text-ink-600 transition hover:text-ink-900">
                       {l.label}
                     </Link>
                   </li>
@@ -72,36 +71,38 @@ export default function Footer() {
           ))}
 
           <div>
-            <h2 className="font-sans text-sm font-semibold uppercase tracking-[0.12em] text-white">Get in touch</h2>
-            <ul className="mt-5 space-y-4 text-[0.95rem]">
+            <h2 className="font-sans text-xs font-medium uppercase tracking-[0.18em] text-ink-500">Get in touch</h2>
+            <ul className="mt-6 space-y-3 text-[0.95rem] text-ink-600">
               <li>
-                <a href={`mailto:${company.email}`} className="flex items-start gap-3 transition hover:text-white">
-                  <Mail className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" aria-hidden="true" />
-                  <span className="break-all">{company.email}</span>
-                </a>
+                <a href={`mailto:${company.email}`} className="break-all transition hover:text-ink-900">{company.email}</a>
               </li>
               <li>
-                <a href={company.phoneHref} className="flex items-start gap-3 transition hover:text-white">
-                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" aria-hidden="true" />
-                  {company.phone}
-                </a>
+                <a href={company.phoneHref} className="transition hover:text-ink-900">{company.phone}</a>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" aria-hidden="true" />
-                <span>{offices.map((o) => o.city).join(' · ')}, India</span>
-              </li>
+              <li className="pt-2 text-ink-500">{offices.map((o) => o.city).join(' · ')}</li>
             </ul>
+            <Link to="/contact" className="group mt-7 inline-flex items-center gap-1.5 font-medium text-ink-900">
+              Start a project
+              <ArrowUpRight className="h-4 w-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+            </Link>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-20 flex flex-col gap-4 border-t border-line py-8 text-sm text-ink-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} {company.legalName}. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link to="/privacy" className="hover:text-white">Privacy policy</Link>
-            <Link to="/terms" className="hover:text-white">Terms of use</Link>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <Link to="/privacy" className="hover:text-ink-900">Privacy</Link>
+            <Link to="/terms" className="hover:text-ink-900">Terms</Link>
+            <Link to="/credits" className="hover:text-ink-900">Image credits</Link>
           </div>
         </div>
       </div>
+      <p
+        aria-hidden="true"
+        className="pointer-events-none -mb-[3vw] select-none whitespace-nowrap bg-gradient-to-b from-ink-900/[0.07] to-ink-900/0 bg-clip-text text-center font-display text-[19vw] font-semibold leading-[0.9] tracking-[-0.05em] text-transparent"
+      >
+        Tattva Tech
+      </p>
     </footer>
   );
 }

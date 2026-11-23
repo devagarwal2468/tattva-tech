@@ -22,7 +22,8 @@ export default function Insights() {
     <>
       <PageHero
         eyebrow="Insights"
-        title="Ideas, lessons and perspectives."
+        title={<>Ideas, lessons and <em className="accent">perspectives.</em></>}
+        illus="/assets/illus/visionary-technology.svg"
         lead="Notes from our team on AI, software, robotics and building products that people actually use."
         breadcrumbs={[{ label: 'Insights' }]}
       />
@@ -32,6 +33,7 @@ export default function Insights() {
         {!loading && error && <ErrorState onRetry={reload} />}
         {!loading && !error && insights.length === 0 && (
           <EmptyState
+            illus="/assets/illus/sharing-ideas.svg"
             title="Our first articles are coming soon."
             desc="In the meantime, follow us on LinkedIn for updates from the team."
             action={<Button href="https://www.linkedin.com/company/tattvaa-tech/" arrow>Follow on LinkedIn</Button>}

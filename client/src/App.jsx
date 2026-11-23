@@ -14,12 +14,13 @@ const Careers = lazy(() => import('./pages/Careers'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Legal = lazy(() => import('./pages/Legal'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const Credits = lazy(() => import('./pages/Credits'));
 const AdminApp = lazy(() => import('./pages/admin/AdminApp'));
 
 function PageFallback() {
   return (
-    <div className="flex min-h-[70vh] items-center justify-center bg-ink-950" role="status" aria-label="Loading">
-      <span className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-brand-400" />
+    <div className="flex min-h-[70vh] items-center justify-center bg-canvas" role="status" aria-label="Loading">
+      <span className="h-8 w-8 animate-spin rounded-full border-2 border-ink-200 border-t-brand-600" />
     </div>
   );
 }
@@ -58,6 +59,7 @@ export default function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="privacy" element={<Legal kind="privacy" />} />
           <Route path="terms" element={<Legal kind="terms" />} />
+          <Route path="credits" element={<Credits />} />
           <Route path="faq" element={<Navigate to="/#faq" replace />} />
           <Route path="*" element={<NotFound />} />
         </Route>

@@ -3,7 +3,6 @@ import { Briefcase, CheckCircle2, ChevronDown, Clock, Loader2, MapPin, Upload, X
 import PageHero from '../components/sections/PageHero';
 import Reveal from '../components/ui/Reveal';
 import Button from '../components/ui/Button';
-import Icon from '../components/ui/Icon';
 import { Section, SectionHeader } from '../components/ui/Section';
 import { CardSkeletons, EmptyState, ErrorState } from '../components/ui/States';
 import { useSeo } from '../lib/seo';
@@ -12,10 +11,10 @@ import { fetchPublicJobs, submitJobApplication } from '../services/api';
 import { company } from '../content/site';
 
 const perks = [
-  { title: 'Real ownership', icon: 'Target', desc: 'Work on real client and product problems from your first week.' },
-  { title: 'Learn across domains', icon: 'Sparkles', desc: 'Software, AI, robotics and design under one roof — pick up skills beyond your role.' },
-  { title: 'Flexible work', icon: 'Globe', desc: 'Offices in Gurugram, Gwalior and Saharanpur, with remote-friendly roles where possible.' },
-  { title: 'Supportive team', icon: 'Users', desc: 'Code reviews, mentorship and an open, ego-free culture.' },
+  { title: 'Real ownership', icon: '/assets/3d/target.webp', desc: 'Work on real client and product problems from your first week.' },
+  { title: 'Learn across domains', icon: '/assets/3d/bulb.webp', desc: 'Software, AI, robotics and design under one roof — pick up skills beyond your role.' },
+  { title: 'Flexible work', icon: '/assets/3d/computer.webp', desc: 'Offices in Gurugram, Gwalior and Saharanpur, with remote-friendly roles where possible.' },
+  { title: 'Supportive team', icon: '/assets/3d/puzzle.webp', desc: 'Code reviews, mentorship and an open, ego-free culture.' },
 ];
 
 const MAX_MB = 10;
@@ -144,7 +143,7 @@ function ApplyDialog({ job, onClose }) {
             </div>
             {status === 'error' && <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700 sm:col-span-2" role="alert">{serverError}</p>}
             <div className="sm:col-span-2">
-              <button type="submit" disabled={status === 'sending'} className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3.5 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
+              <button type="submit" disabled={status === 'sending'} className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-900 px-6 py-3.5 font-medium text-white transition hover:bg-brand-700 disabled:opacity-60">
                 {status === 'sending' ? <><Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Submitting…</> : 'Submit application'}
               </button>
             </div>
@@ -216,7 +215,8 @@ export default function Careers() {
     <>
       <PageHero
         eyebrow="Careers"
-        title="Build the future with us."
+        title={<>Build the future <em className="accent">with us.</em></>}
+        illus="/assets/illus/build-a-team.svg"
         lead="We’re a growing team of engineers, designers and makers working across software, AI and robotics. If you love building things that matter, we’d like to meet you."
         breadcrumbs={[{ label: 'Careers' }]}
       >
@@ -224,11 +224,11 @@ export default function Careers() {
       </PageHero>
 
       <Section>
-        <SectionHeader eyebrow="Life at Tattva" title="Why work with us" />
+        <SectionHeader eyebrow="Life at Tattva" title={<>Why work <em className="accent">with us</em></>} />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {perks.map((p, i) => (
-            <Reveal key={p.title} delay={i * 80} className="card p-7">
-              <Icon name={p.icon} className="h-6 w-6 text-brand-600" />
+            <Reveal key={p.title} delay={i * 80} className="card-interactive group p-7">
+              <img src={p.icon} alt="" width="64" height="64" className="h-16 w-16 object-contain transition-transform duration-500 group-hover:-rotate-6" loading="lazy" />
               <h3 className="mt-5 font-display text-lg font-semibold">{p.title}</h3>
               <p className="mt-2 leading-relaxed text-ink-500">{p.desc}</p>
             </Reveal>
@@ -236,8 +236,8 @@ export default function Careers() {
         </div>
       </Section>
 
-      <Section id="open-roles" className="bg-ink-50/60">
-        <SectionHeader eyebrow="Open roles" title="Current openings" />
+      <Section id="open-roles" className="border-t border-line bg-white">
+        <SectionHeader eyebrow="Open roles" title={<>Current <em className="accent">openings</em></>} />
         <div className="space-y-4">
           {loading && <CardSkeletons count={3} className="h-28" />}
           {!loading && error && <ErrorState onRetry={reload} />}

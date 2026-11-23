@@ -25,7 +25,8 @@ export default function Work() {
     <>
       <PageHero
         eyebrow="Our work"
-        title="Real solutions. Real impact."
+        title={<>Real solutions. <em className="accent">Real impact.</em></>}
+        illus="/assets/illus/landing-page.svg"
         lead="A selection of products and systems we have designed, engineered and launched with our clients."
         breadcrumbs={[{ label: 'Work' }]}
       />
@@ -35,6 +36,7 @@ export default function Work() {
         {!loading && error && <ErrorState onRetry={reload} />}
         {!loading && !error && projects.length === 0 && (
           <EmptyState
+            illus="/assets/illus/real-time-collaboration.svg"
             title="Case studies are being published."
             desc="Many of our projects are under NDA. We’re happy to walk you through relevant work and references on a call."
             action={<Button to="/contact" arrow>Ask for references</Button>}
@@ -69,7 +71,7 @@ export default function Work() {
           </>
         )}
       </Section>
-      <CtaBand title="Your project could be next." />
+      <CtaBand title={<>Your project could be <em className="accent">next.</em></>} />
     </>
   );
 }
