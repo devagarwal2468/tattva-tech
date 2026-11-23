@@ -2,17 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Check } from 'lucide-react';
 import Icon from '../ui/Icon';
-import Visual from './Visual';
+import ProductPreview from './ProductPreview';
 
 export default function ProductCard({ product, featured = false }) {
-  const { name, tagline, description, category, badge, icon, coverImage, productUrl, features = [] } = product;
+  const { name, tagline, description, category, badge, icon, coverImage, productUrl, previewType, features = [] } = product;
   return (
     <article className={`card-interactive group flex h-full flex-col overflow-hidden ${featured ? 'lg:flex-row' : ''}`}>
       <div className={`relative ${featured ? 'lg:w-1/2' : ''}`}>
         {coverImage ? (
           <img src={coverImage} alt={`${name} preview`} loading="lazy" className={`w-full object-cover ${featured ? 'h-64 lg:h-full' : 'aspect-[16/10]'}`} />
         ) : (
-          <Visual icon={icon} seed={name} className={featured ? 'h-64 lg:h-full lg:min-h-[340px]' : 'aspect-[16/10]'} />
+          <ProductPreview type={previewType} icon={icon} seed={name} className={featured ? 'h-64 lg:h-full lg:min-h-[340px]' : 'aspect-[16/10]'} />
         )}
         {badge && (
           <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-ink-800 shadow-sm backdrop-blur">{badge}</span>

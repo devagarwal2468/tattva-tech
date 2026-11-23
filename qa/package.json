@@ -9,6 +9,7 @@
     "e2e": "node e2e.mjs"
   },
   "devDependencies": {
+    "lighthouse": "^12.2.1",
     "puppeteer-core": "23.10.4"
   }
 }

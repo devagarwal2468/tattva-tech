@@ -103,3 +103,8 @@ Not changed (owner decision): stats 50+/30+/5+/3, "international clients" wordin
 Not done: resumes are still publicly accessible Cloudinary URLs (same as before) — switching to authenticated delivery needs the owner's Cloudinary settings.
 
 Verification after all fixes: API tests **30/30**, `qa/e2e.mjs` **18/18**, `qa/shots.mjs` **24/24** (12 routes × desktop/mobile, 0 console errors, 0 sideways scroll), `vite build` OK.
+
+### 2026-11-23 — Reference list for the owner + product previews
+- `REFERENCES.md`: the 12 reference sites (9 engineering/IT-services companies incl. GeekyAnts, Appinventiv and Tata Elxsi from India; 3 design benchmarks: Linear, Vercel, Stripe), what we took from each, and what we deliberately did not copy.
+- Product cards now show drawn product-UI previews (email, CRM pipeline, AI agent chat, analytics) chosen by `previewType`, Stripe-style, instead of a plain gradient. Decorative only, with no numbers.
+- Verified: desktop + mobile screenshots of /products, `qa/e2e.mjs` 18/18, `qa/shots.mjs` 24/24, Lighthouse mobile: / Perf 96, A11y 96, BP 100, SEO 100; /products Perf 93, A11y 96, BP 100, SEO 100.
