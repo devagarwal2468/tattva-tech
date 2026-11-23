@@ -112,3 +112,9 @@ Verification after all fixes: API tests **30/30**, `qa/e2e.mjs` **18/18**, `qa/s
 ### 2026-11-23 — Measured comparison with reference sites + private resumes
 - Lighthouse (mobile) run on all 12 reference sites and on our build (`qa/lh-compare.sh`); table in `REFERENCES.md`. Fair comparison (network-independent): our page weight 185 KiB vs 1.4–27 MB, total blocking time 40 ms vs 300–15,330 ms, A11y 96 / Best practices 100 / SEO 100. Our Performance score (96) is flattered because our build was served locally — re-measure after deploy.
 - Resumes: new uploads use Cloudinary authenticated (private) delivery; admin download signs a 5-minute URL; old public resumes keep working; HR email points to the admin panel instead of a raw link. Verified: 3 new unit tests (upload params, URL parsing for old/new URLs, signed URL fields) → API suite 33/33; library source checked to confirm `type` is passed to Cloudinary. **Not verified: a real upload/download against Cloudinary** (needs the owner's account) — listed as a post-deploy check in DEPLOY.md.
+
+### 2026-11-23 — Owner answers + local preview
+- Owner: stats (50+/30+/5+/3) confirmed true; some products are live (links not yet given); do NOT push yet — "pehle dikhao mujhe local chalake".
+- Local preview running: http://localhost:5173 (also http://192.168.50.1:5173 and http://172.30.3.192:5173), local admin admin@local.test / localpass123 (in-memory DB, local only).
+- Verified: setting a product's `productUrl` in the admin panel shows a "Visit <name>" button on that card; others keep "Request early access" (tested with a temporary example URL, then reverted).
+- Waiting on owner: review of the local site, product names + live URLs, permission to push.
