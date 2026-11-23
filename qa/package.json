@@ -1,0 +1,14 @@
+{
+  "name": "tattva-tech-qa",
+  "private": true,
+  "type": "module",
+  "description": "Browser QA for the Tattva Tech website (uses the locally installed Google Chrome).",
+  "scripts": {
+    "seed": "node seed-local.mjs",
+    "shots": "node shots.mjs",
+    "e2e": "node e2e.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "23.10.4"
+  }
+}

@@ -72,3 +72,9 @@ Patterns worth adopting (and how we apply them):
 | /about | 94 | 96 | 100 | 100 |
 | /careers | 93 | 95 | 100 | 100 |
 (scores measured locally; real numbers on Vercel depend on network/CDN)
+
+### 2026-11-23 — Recovery after power cut (22 Nov ~20:39 IST)
+- Checked on disk: branch `redesign-2026`, last commit `159f1f6`, working tree clean → all work up to the motion/logo pass is safe.
+- Lost: the independent review agent (its transcript shows it only read 4 files, no findings) → re-launched from scratch.
+- Lost: local dev servers and the /tmp scratchpad with my QA scripts → QA scripts now live in the repo under `qa/` (seed, screenshots, E2E) so they survive restarts.
+- Re-verified on the restored stack: `qa/e2e.mjs` 15/15 pass, `qa/shots.mjs` 24/24 pass (12 routes × desktop + mobile, 0 console errors, 0 sideways scroll).
