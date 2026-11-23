@@ -37,3 +37,7 @@ cd qa && npm install && npm run seed && npm run shots && npm run e2e
 ```
 
 Deploying: see [DEPLOY.md](DEPLOY.md). Work log: [PROGRESS.md](PROGRESS.md). Design references: [REFERENCES.md](REFERENCES.md).
+
+  
+  
+  Deployment sync check
