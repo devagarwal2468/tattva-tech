@@ -161,3 +161,7 @@ A fresh reviewer agent critiqued 22 screenshots against Linear/Vercel/Stripe/Cod
 ### 2026-11-23 — Push to the live repo
 - Owner: live site's repo is **github.com/devagarwal2468/tattva-tech**; push there.
 - Checked before pushing: its `main` is `8ca285b` = our base, so `redesign-2026` is a clean fast-forward (no live changes overwritten). SSH key authenticates as `devagarwal2468`. Scan: no secrets or `.env` files in the new commits, largest file 250 KB.
+- Pushed: branch `redesign-2026` and (owner chose "abhi main mein daal do") `main` → both at `dd5f4b0` (verified with `git ls-remote`).
+- Owner: frontend is hosted on **Cloudflare**, not Vercel. Added `client/public/_headers` (security headers + caching; Cloudflare ignores `vercel.json`). SPA routing works on Cloudflare Pages because the build has no `404.html` (checked `dist/`).
+- Fixed a caching mistake: `/assets/` also holds un-hashed photos/icons, so it is no longer cached "immutable for 1 year" (would have kept stale images); only hashed `.js/.css` are immutable on Vercel, 7 days on Cloudflare.
+- Could not check the live domain from the lab: the campus Palo Alto firewall sinkholes `tattvatechsolutions.in` DNS (resolves to 198.135.184.22, TLS reset) and blocks DNS-over-HTTPS. Live checks must be done by the owner from mobile data, or from another network.
