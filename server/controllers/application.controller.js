@@ -9,7 +9,7 @@ import {
   sendApplicationConfirmationToCandidate,
 } from '../utils/emailService.js';
 import { buildSearchRegex, isValidEmail } from '../utils/security.js';
-import { cloudinary, extractPublicId } from '../utils/fileUpload.js';
+import { cloudinary, extractPublicId, extractDeliveryType, RESUME_DELIVERY_TYPE } from '../utils/fileUpload.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,7 +22,7 @@ const __dirname = path.dirname(__filename);
 const discardUpload = async (req) => {
   if (!req.file?.filename) return;
   try {
-    await cloudinary.uploader.destroy(req.file.filename, { resource_type: 'raw' });
+    await cloudinary.uploader.destroy(req.file.filename, { resource_type: 'raw', type: RESUME_DELIVERY_TYPE });
   } catch (err) {
     console.warn('[Notice]: Could not remove rejected upload:', err.message);
   }
@@ -72,9 +72,8 @@ export const submitApplication = async (req, res, next) => {
       status: 'New',
     });
 
-    const emailResumeUrl = application.resumeUrl.startsWith('http')
-      ? application.resumeUrl
-      : `${req.protocol}://${req.get('host')}${application.resumeUrl}`;
+    // Private (authenticated) resumes can only be downloaded from the admin panel.
+    const emailResumeUrl = extractDeliveryType(application.resumeUrl) === 'upload' ? application.resumeUrl : '';
 
     // Awaited (with internal timeouts) so serverless functions don't freeze before sending.
     await Promise.allSettled([
@@ -199,7 +198,7 @@ export const deleteApplication = async (req, res, next) => {
       const publicId = extractPublicId(application.resumeUrl);
       if (publicId) {
         try {
-          await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
+          await cloudinary.uploader.destroy(publicId, { resource_type: 'raw', type: extractDeliveryType(application.resumeUrl) || 'upload' });
         } catch (err) {
           console.warn('[Notice]: Cloudinary resume destroy error:', err.message);
         }
@@ -247,7 +246,8 @@ export const downloadResume = async (req, res, next) => {
         if (publicId) {
           downloadUrl = cloudinary.utils.private_download_url(publicId, '', {
             resource_type: 'raw',
-            type: 'upload',
+            type: extractDeliveryType(application.resumeUrl) || 'upload',
+            expires_at: Math.floor(Date.now() / 1000) + 300,
           });
         }
       }

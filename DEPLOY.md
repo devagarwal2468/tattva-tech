@@ -16,7 +16,7 @@ The site is two Vercel projects, same as before:
 | `SMTP_USER`, `SMTP_PASS` | For emails | For Gmail use an App Password. Optional: `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_FROM` |
 | `COMPANY_HEAD_EMAIL` | For emails | Who receives new enquiries |
 | `HR_EMAIL` | For emails | Who receives job applications |
-| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | For uploads | Resumes and admin images |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | For uploads | Resumes and admin images. New resumes are stored **private** (Cloudinary "authenticated" delivery) and open only through the admin panel. `CLOUDINARY_RESUME_TYPE=upload` switches back to public links |
 | `ADMIN_INVITE_CODE` | Optional | Required for anyone to register as admin through the API in production. Easier: use `npm run create-admin` (below) |
 | `SEND_AUTO_REPLY` | Optional | `true` sends a short "we received your message" email to people who submit forms. Off by default to avoid the form being abused for spam |
 | `CORS_ORIGINS` | Optional | Defaults allow tattvatechsolutions.in, www. and localhost. Add Vercel preview URLs here (comma-separated) if you test on previews |
@@ -65,5 +65,6 @@ Pick one canonical domain (the code uses `https://tattvatechsolutions.in`). In V
 
 1. `https://<api>/api/health` → `{"status":"healthy","db":"connected"}`
 2. Submit the contact form → enquiry appears in `/admin` → email arrives (if SMTP set).
-3. Visit `/sitemap.xml`, `/robots.txt`, and share the homepage link on WhatsApp to see the preview image.
-4. Submit `https://tattvatechsolutions.in/sitemap.xml` in Google Search Console.
+3. Apply to a test job with a PDF → in `/admin` → Candidate Applications, the resume downloads; the raw Cloudinary link from the database should NOT open in a browser (it is private). *This step could not be tested before deployment because it needs your Cloudinary account.*
+4. Visit `/sitemap.xml`, `/robots.txt`, and share the homepage link on WhatsApp to see the preview image.
+5. Submit `https://tattvatechsolutions.in/sitemap.xml` in Google Search Console.

@@ -25,10 +25,23 @@ export { cloudinary };
 // ─── Helper: extract Cloudinary public_id from a secure URL ─────────────────
 // For images: https://res.cloudinary.com/<cloud>/image/upload/v123/folder/abc.jpg -> folder/abc
 // For raw files: https://res.cloudinary.com/<cloud>/raw/upload/v123/folder/doc.pdf -> folder/doc.pdf
+// Resumes contain personal data, so new uploads use Cloudinary "authenticated"
+// delivery: the file URL alone does not open it; the admin download route signs a
+// short-lived URL. Set CLOUDINARY_RESUME_TYPE=upload to go back to public files.
+export const RESUME_DELIVERY_TYPE = process.env.CLOUDINARY_RESUME_TYPE === 'upload' ? 'upload' : 'authenticated';
+
+const DELIVERY_TYPES = ['upload', 'authenticated', 'private'];
+
+/** Delivery type of a Cloudinary URL ('upload' | 'authenticated' | 'private'), or null. */
+export const extractDeliveryType = (url) => {
+  if (typeof url !== 'string') return null;
+  return url.split('/').find((p) => DELIVERY_TYPES.includes(p)) || null;
+};
+
 export const extractPublicId = (url) => {
   try {
     const parts = url.split('/');
-    const uploadIdx = parts.indexOf('upload');
+    const uploadIdx = parts.findIndex((p) => DELIVERY_TYPES.includes(p));
     if (uploadIdx === -1) return null;
     const isRaw = parts.includes('raw');
     let start = uploadIdx + 1;
@@ -74,17 +87,20 @@ const insightStorage = new CloudinaryStorage({
 });
 
 // ─── Cloudinary storage — Candidate resumes (PDF / DOC / DOCX) ───────────────
+export const resumeUploadParams = async (req, file) => {
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+  const sanitizedOriginal = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+  return {
+    folder: 'tattvaa-tech/resumes',
+    resource_type: 'raw',
+    type: RESUME_DELIVERY_TYPE,
+    public_id: `resume-${uniqueSuffix}-${sanitizedOriginal}`,
+  };
+};
+
 const resumeStorage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const sanitizedOriginal = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-    return {
-      folder: 'tattvaa-tech/resumes',
-      resource_type: 'raw',
-      public_id: `resume-${uniqueSuffix}-${sanitizedOriginal}`,
-    };
-  },
+  params: resumeUploadParams,
 });
 
 // ─── File filters ─────────────────────────────────────────────────────────────
