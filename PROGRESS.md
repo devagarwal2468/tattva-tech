@@ -144,3 +144,20 @@ A fresh reviewer agent critiqued 22 screenshots against Linear/Vercel/Stripe/Cod
 - Not a site bug: the "blank FAQ/CTA" in the reviewer's mobile shots came from my screenshot script stopping at the page's initial height — fixed in `qa/lib.mjs`.
 - Owner decisions still open: company-domain email (footer shows Gmail).
 - Verified after fixes: fonts PASS, e2e 18/18, shots 26/26, Lighthouse mobile Home 92/100/100/100, Services 93/100/100/100.
+
+### 2026-11-23 — Recovery after second power cut (~16:50 IST)
+- Checked on disk: branch `redesign-2026`, last commit `f40a130`, working tree clean.
+- Restarted local preview: in-memory MongoDB (:27111), API (:5000, health `db: connected`), Vite client (:5173). Network address is now **192.168.11.141** (changed from before).
+- Local data: `qa/seed-local.mjs` (sample job/project/article, admin@local.test / localpass123) + the 4 product names from the old site (MailPilot, LeadFlow CRM, AI Agent Hub, InsightBoard) added to the local DB only, with no metrics or URLs, so the Products section is visible in the preview.
+- Re-verified: fonts PASS, `qa/e2e.mjs` 18/18, `qa/shots.mjs` 26/26 (13 routes × desktop/mobile, 0 console errors, 0 sideways scroll), API tests 33/33. Home screenshot checked by eye: v2 light design is what's running.
+- Nothing committed, pushed or deployed (owner instruction).
+
+### 2026-11-23 ~17:50 IST — Re-check after tab restart
+- Servers were already running from the 17:44 resume (mongo :27111, API :5000, Vite :5173 started 17:44–17:45, after the last `tailwind.config.js` edit at 12:38) — not restarted again.
+- Re-verified now: API health `db: connected`; local data 4 products / 1 sample project / 1 sample article / 1 sample job; `qa/font-check.mjs` PASS; `qa/e2e.mjs` 18/18; `qa/shots.mjs` 26/26; Home screenshot checked by eye (v2 light design); LAN URL http://192.168.11.141:5173 returns 200 and its `/api/health` works through the proxy.
+- Still not committed / pushed / deployed (owner instruction).
+- Lighthouse accessibility re-run just now on the running local site (/, /services, /about, /careers, /work, /contact, /products): **100 on all 7, zero failing audits** — the older header-tagline contrast flag (22 Nov, dark design) no longer occurs with the v2 light header.
+
+### 2026-11-23 — Push to the live repo
+- Owner: live site's repo is **github.com/devagarwal2468/tattva-tech**; push there.
+- Checked before pushing: its `main` is `8ca285b` = our base, so `redesign-2026` is a clean fast-forward (no live changes overwritten). SSH key authenticates as `devagarwal2468`. Scan: no secrets or `.env` files in the new commits, largest file 250 KB.
