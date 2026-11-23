@@ -26,7 +26,6 @@ const DEFAULT_ORIGINS = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
 ];
-const VERCEL_PREVIEW_ORIGIN = /^https:\/\/tattva-tech[\w-]*\.vercel\.app$/;
 
 const configuredOrigins = (process.env.CORS_ORIGINS || '')
   .split(',')
@@ -40,7 +39,7 @@ const corsOptions = {
     // Same-origin / server-to-server / curl requests carry no Origin header.
     if (!origin || allowAllOrigins) return callback(null, true);
     const normalized = origin.replace(/\/$/, '');
-    if (allowedOrigins.has(normalized) || VERCEL_PREVIEW_ORIGIN.test(normalized)) {
+    if (allowedOrigins.has(normalized)) {
       return callback(null, true);
     }
     return callback(null, false);

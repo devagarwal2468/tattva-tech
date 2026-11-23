@@ -1,4 +1,5 @@
 import express from 'express';
+import { sanitizeRequest } from '../middleware/sanitize.js';
 import {
   getPublicProducts,
   getAllProductsAdmin,
@@ -17,8 +18,8 @@ router.get('/', getPublicProducts);
 
 // Admin routes
 router.get('/admin/all', protectAdmin, getAllProductsAdmin);
-router.post('/', protectAdmin, uploadProductImage.single('coverImage'), createProduct);
-router.put('/:id', protectAdmin, uploadProductImage.single('coverImage'), updateProduct);
+router.post('/', protectAdmin, uploadProductImage.single('coverImage'), sanitizeRequest, createProduct);
+router.put('/:id', protectAdmin, uploadProductImage.single('coverImage'), sanitizeRequest, updateProduct);
 router.patch('/:id/publish', protectAdmin, togglePublishProduct);
 router.delete('/:id', protectAdmin, deleteProduct);
 

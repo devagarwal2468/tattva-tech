@@ -8,108 +8,7 @@ import { cloudinary, extractPublicId } from '../utils/fileUpload.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initial products seed fallback
-const defaultProducts = [
-  {
-    name: 'MailPilot',
-    tagline: 'Email automation for modern businesses with high deliverability.',
-    category: 'Marketing',
-    badge: '',
-    icon: 'Send',
-    previewType: 'mail',
-    description:
-      'MailPilot helps businesses automate outreach, nurture leads and scale communication with powerful email marketing tools, domain reputation monitoring, and autonomous follow-ups.',
-    productUrl: '',
-    features: ['Instant SMTP Delivery', 'Smart Spam Protection', 'Dynamic Personalization', 'Analytics Suite'],
-    metrics: {
-      activeUsers: '',
-      deliveryRate: '',
-      engagement: '',
-    },
-    isFeatured: true,
-    isPublished: true,
-    order: 1,
-  },
-  {
-    name: 'LeadFlow CRM',
-    tagline: 'Manage leads, clients and sales pipelines with intuitive ease.',
-    category: 'CRM',
-    badge: '',
-    icon: 'Users',
-    previewType: 'crm',
-    description:
-      'A high-performance pipeline manager for closing enterprise deals, tracking sales team quota velocity, and syncing revenue data in real-time.',
-    productUrl: '',
-    features: ['Visual Kanban Pipeline', 'Automated Deal Scoring', 'Stripe & Quickbooks Sync', 'Team Activity Logs'],
-    metrics: {
-      activeUsers: '',
-      deliveryRate: '',
-      engagement: '',
-    },
-    isFeatured: false,
-    isPublished: true,
-    order: 2,
-  },
-  {
-    name: 'AI Agent Hub',
-    tagline: 'Build, test and deploy autonomous multi-agent AI teams in minutes.',
-    category: 'AI Agents',
-    badge: '',
-    icon: 'Bot',
-    previewType: 'agent',
-    description:
-      'Deploy autonomous teams of LLM-powered workers that collaborate to solve complex customer queries, draft engineering specs, and execute web research.',
-    productUrl: '',
-    features: ['Multi-Agent Mesh', 'Deterministic Tool Calling', 'Long-term Memory Store', 'Audit Guardrails'],
-    metrics: {
-      activeUsers: '',
-      deliveryRate: '',
-      engagement: '',
-    },
-    isFeatured: false,
-    isPublished: true,
-    order: 3,
-  },
-  {
-    name: 'InsightBoard',
-    tagline: 'Turn fragmented data silos into real-time actionable visual insights.',
-    category: 'Analytics',
-    badge: '',
-    icon: 'BarChart3',
-    previewType: 'analytics',
-    description:
-      'Unified executive intelligence dashboard uniting disparate analytics databases into sub-second visual charts, anomaly alerts, and revenue forecasts.',
-    productUrl: '',
-    features: ['Sub-second OLAP Queries', 'Automated Anomaly Detection', 'Custom Executive Reports', 'Role-based Access'],
-    metrics: {
-      activeUsers: '',
-      deliveryRate: '',
-      engagement: '',
-    },
-    isFeatured: false,
-    isPublished: true,
-    order: 4,
-  },
-];
-
-// Seed initial products if collection is empty
-// Runs at most once per process (the DB is guaranteed connected by requireDB).
-let seedPromise = null;
-const seedProductsIfEmpty = () => {
-  if (!seedPromise) {
-    seedPromise = (async () => {
-      const count = await Product.countDocuments();
-      if (count === 0) {
-        await Product.insertMany(defaultProducts);
-        console.log('[Database Seeded]: Initial SaaS products inserted.');
-      }
-    })().catch((err) => {
-      seedPromise = null;
-      console.warn('[Seed Warning]: Product seed failed:', err.message);
-    });
-  }
-  return seedPromise;
-};
+// Products are created by admins in the dashboard; nothing is auto-seeded.
 
 // @desc    Get published products for public /products page
 // @route   GET /api/products
@@ -117,7 +16,6 @@ const seedProductsIfEmpty = () => {
 export const getPublicProducts = async (req, res, next) => {
   try {
     const { category } = req.query;
-    await seedProductsIfEmpty();
 
     const query = { isPublished: true };
     if (category && category !== 'All' && category !== 'All Products') {
@@ -142,7 +40,6 @@ export const getPublicProducts = async (req, res, next) => {
 export const getAllProductsAdmin = async (req, res, next) => {
   try {
     const { category, search } = req.query;
-    await seedProductsIfEmpty();
 
     const query = {};
     if (category && category !== 'All' && category !== 'All Products') {

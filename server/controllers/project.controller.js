@@ -133,7 +133,8 @@ export const updateProject = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Project not found.' });
     }
 
-    let updateData = { ...req.body };
+    const EDITABLE = ['title', 'clientName', 'category', 'description', 'technologies', 'projectUrl', 'coverImage', 'previewType', 'impactMetric', 'isPublished'];
+    let updateData = Object.fromEntries(Object.entries(req.body).filter(([k]) => EDITABLE.includes(k)));
 
     if (req.file) {
       // Remove previous image from Cloudinary if applicable

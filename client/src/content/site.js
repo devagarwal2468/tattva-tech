@@ -48,7 +48,7 @@ export const offices = [
 export const stats = [
   { value: '50+', label: 'Projects delivered' },
   { value: '30+', label: 'Clients served' },
-  { value: '5+', label: 'In-house products' },
+  { value: '5+', label: 'Products in development' },
   { value: '3', label: 'Offices across India' },
 ];
 

@@ -35,7 +35,7 @@ function ContactForm() {
     service: services.some((s) => s.title === presetService) ? presetService : '',
     budget: '',
     message: topic ? `I'm interested in ${topic}. ` : '',
-    website: '', // honeypot — real users never see or fill this
+    hp_check: '', // honeypot — real users never see or fill this
   });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
@@ -149,8 +149,8 @@ function ContactForm() {
         </div>
         {/* Honeypot: hidden from people, visible to naive bots */}
         <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
-          <label htmlFor="f-website">Website</label>
-          <input id="f-website" name="website" tabIndex={-1} autoComplete="off" value={values.website} onChange={onChange} />
+          <label htmlFor="f-hp">Leave this field empty</label>
+          <input id="f-hp" name="hp_check" tabIndex={-1} autoComplete="off" value={values.hp_check} onChange={onChange} />
         </div>
       </div>
 

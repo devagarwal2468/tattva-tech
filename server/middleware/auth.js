@@ -31,6 +31,13 @@ export const protectAdmin = async (req, res, next) => {
       });
     }
 
+    if (user.passwordChangedAt && decoded.iat * 1000 < user.passwordChangedAt.getTime()) {
+      return res.status(401).json({
+        success: false,
+        message: 'Password was changed. Please log in again.',
+      });
+    }
+
     req.user = user;
     return next();
   } catch (error) {

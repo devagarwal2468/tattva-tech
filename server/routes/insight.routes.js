@@ -1,4 +1,5 @@
 import express from 'express';
+import { sanitizeRequest } from '../middleware/sanitize.js';
 import {
   getPublicInsights,
   getAllInsightsAdmin,
@@ -17,8 +18,8 @@ router.get('/', getPublicInsights);
 
 // Admin routes
 router.get('/admin/all', protectAdmin, getAllInsightsAdmin);
-router.post('/', protectAdmin, uploadInsightImage.single('coverImage'), createInsight);
-router.put('/:id', protectAdmin, uploadInsightImage.single('coverImage'), updateInsight);
+router.post('/', protectAdmin, uploadInsightImage.single('coverImage'), sanitizeRequest, createInsight);
+router.put('/:id', protectAdmin, uploadInsightImage.single('coverImage'), sanitizeRequest, updateInsight);
 router.patch('/:id/publish', protectAdmin, togglePublishInsight);
 router.delete('/:id', protectAdmin, deleteInsight);
 

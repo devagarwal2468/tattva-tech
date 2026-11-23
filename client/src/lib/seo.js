@@ -22,12 +22,13 @@ export function useSeo({ title, description, path, noindex = false } = {}) {
     document.title = fullTitle;
     const url = `${company.url}${path ?? window.location.pathname}`;
 
-    setMeta('name', 'description', description);
+    const desc = description || company.summary;
+    setMeta('name', 'description', desc);
     setMeta('property', 'og:title', fullTitle);
-    setMeta('property', 'og:description', description);
+    setMeta('property', 'og:description', desc);
     setMeta('property', 'og:url', url);
     setMeta('name', 'twitter:title', fullTitle);
-    setMeta('name', 'twitter:description', description);
+    setMeta('name', 'twitter:description', desc);
     setMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow');
 
     let canonical = document.head.querySelector('link[rel="canonical"]');

@@ -78,3 +78,28 @@ Patterns worth adopting (and how we apply them):
 - Lost: the independent review agent (its transcript shows it only read 4 files, no findings) → re-launched from scratch.
 - Lost: local dev servers and the /tmp scratchpad with my QA scripts → QA scripts now live in the repo under `qa/` (seed, screenshots, E2E) so they survive restarts.
 - Re-verified on the restored stack: `qa/e2e.mjs` 15/15 pass, `qa/shots.mjs` 24/24 pass (12 routes × desktop + mobile, 0 console errors, 0 sideways scroll).
+
+### 2026-11-23 — Independent review (re-run after power cut) and fixes
+A fresh reviewer agent read the full `main..redesign-2026` diff. Each finding was checked in the code by me before fixing.
+
+| # | Finding | Status | Verified how |
+|---|---|---|---|
+| 1 | Old fake demo rows (fake clients/authors/jobs/product metrics) are probably still in the live DB | Fixed (tool) | New `npm run remove-demo-content` (dry run by default, `--apply` to change). Tested on planted data: fake rows removed, a real project with the same title but a different client and a real job with the same title were kept |
+| 2 | Products were still auto-seeded when the collection was empty | Fixed | Seed removed; test "products are not auto-seeded" |
+| 3 | Public forms could make the server email any address (auto-replies echoed the user's name) | Fixed | Auto-replies are off unless `SEND_AUTO_REPLY=true` and never include user text |
+| 4 | Rejected job applications left resume files in Cloudinary | Fixed | Upload is deleted on every rejection or error path (code review; Cloudinary not available locally) |
+| 5 | Empty production DB → first stranger could register as admin | Fixed | Production always needs `ADMIN_INVITE_CODE`; test with NODE_ENV=production + 0 users → 403 |
+| 6 | CORS regex accepted `tattva-tech-anything.vercel.app` | Fixed | Regex removed (use `CORS_ORIGINS` for previews); test: look-alike origin gets no CORS header |
+| 7 | Old tokens kept working after a password change | Fixed | `passwordChangedAt`; test: old token → 401, new login works |
+| 8 | Multipart bodies not sanitised; project update accepted any field | Fixed | Sanitiser runs after multer; project/job updates whitelist fields; test: `createdAt` cannot be overwritten |
+| 9 | Honeypot field named `website` could be autofilled | Fixed | Renamed to `hp_check`, drops are logged; test added |
+| 10 | Collapsed FAQ answers still read by screen readers | Fixed | `aria-hidden` when closed |
+| 11 | Pages without a description kept the previous page's meta description | Fixed | Falls back to the company summary |
+| — | "5+ In-house products" was stronger than the old site's "5+ Products in development" | Fixed | Wording reverted to "Products in development"; product copy says "we are building" |
+
+**Also found by me during recovery testing:** the mobile hamburger menu opened but was invisible (the drawer was clipped inside the header because of its blur/transform). Fixed by moving the drawer outside the header; 3 regression checks added to `qa/e2e.mjs`.
+
+Not changed (owner decision): stats 50+/30+/5+/3, "international clients" wording (both from the old site), decorative hero mock-ups.
+Not done: resumes are still publicly accessible Cloudinary URLs (same as before) — switching to authenticated delivery needs the owner's Cloudinary settings.
+
+Verification after all fixes: API tests **30/30**, `qa/e2e.mjs` **18/18**, `qa/shots.mjs` **24/24** (12 routes × desktop/mobile, 0 console errors, 0 sideways scroll), `vite build` OK.

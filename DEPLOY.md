@@ -17,8 +17,9 @@ The site is two Vercel projects, same as before:
 | `COMPANY_HEAD_EMAIL` | For emails | Who receives new enquiries |
 | `HR_EMAIL` | For emails | Who receives job applications |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | For uploads | Resumes and admin images |
-| `ADMIN_INVITE_CODE` | Optional | Lets a new admin register through the API |
-| `CORS_ORIGINS` | Optional | Defaults already allow tattvatechsolutions.in, www., localhost and `tattva-tech*.vercel.app` previews |
+| `ADMIN_INVITE_CODE` | Optional | Required for anyone to register as admin through the API in production. Easier: use `npm run create-admin` (below) |
+| `SEND_AUTO_REPLY` | Optional | `true` sends a short "we received your message" email to people who submit forms. Off by default to avoid the form being abused for spam |
+| `CORS_ORIGINS` | Optional | Defaults allow tattvatechsolutions.in, www. and localhost. Add Vercel preview URLs here (comma-separated) if you test on previews |
 
 Full list with comments: `server/.env.example`.
 
@@ -42,7 +43,15 @@ Then log in at `https://tattvatechsolutions.in/admin`.
 
 ## 4. Clean up old demo content in the live database
 
-The old code auto-inserted demo records into the database. If your live site shows any of these, delete or edit them in `/admin`:
+The old code auto-inserted demo records into the database. A script removes exactly those records (and nothing you created yourself):
+
+```bash
+cd server
+MONGODB_URI="<your Atlas URI>" npm run remove-demo-content            # dry run: shows what would change
+MONGODB_URI="<your Atlas URI>" npm run remove-demo-content -- --apply # actually change it
+```
+
+What it targets (you can also do this by hand in `/admin`):
 - **Work & Projects:** "AI-Powered CRM Platform" (Apex Enterprise Group), "E-commerce Mobile App" (Vogue & Style Marketplace), "Analytics Dashboard" (CloudScale Telemetry), "Autonomous Support Copilot" (FinServe Global) — these clients are not real.
 - **Insights:** articles by "Aarav Mehta, Head of AI" — this person is not real.
 - **Job Vacancies:** roles with salaries like ₹22L–₹40L and "Bengaluru Hub".

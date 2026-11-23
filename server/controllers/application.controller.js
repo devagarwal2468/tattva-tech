@@ -17,7 +17,22 @@ const __dirname = path.dirname(__filename);
 // @desc    Submit a job application with resume upload
 // @route   POST /api/applications
 // @access  Public
+// Remove an already-uploaded resume when the request is rejected, so invalid
+// submissions don't leave orphaned files in Cloudinary.
+const discardUpload = async (req) => {
+  if (!req.file?.filename) return;
+  try {
+    await cloudinary.uploader.destroy(req.file.filename, { resource_type: 'raw' });
+  } catch (err) {
+    console.warn('[Notice]: Could not remove rejected upload:', err.message);
+  }
+};
+
 export const submitApplication = async (req, res, next) => {
+  const reject = async (status, message) => {
+    await discardUpload(req);
+    return res.status(status).json({ success: false, message });
+  };
   try {
     const str = (v) => (typeof v === 'string' ? v.trim() : '');
     const jobId = str(req.body.jobId);
@@ -29,14 +44,11 @@ export const submitApplication = async (req, res, next) => {
     const coverLetter = str(req.body.coverLetter);
 
     if (!applicantName || !email || !phone || !jobTitle) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide full name, email, phone, and job title.',
-      });
+      return reject(400, 'Please provide full name, email, phone, and job title.');
     }
 
     if (!isValidEmail(email)) {
-      return res.status(400).json({ success: false, message: 'Please provide a valid email address.' });
+      return reject(400, 'Please provide a valid email address.');
     }
 
     if (!req.file) {
@@ -88,6 +100,7 @@ export const submitApplication = async (req, res, next) => {
       data: { _id: application._id, jobTitle: application.jobTitle, createdAt: application.createdAt },
     });
   } catch (error) {
+    await discardUpload(req);
     next(error);
   }
 };

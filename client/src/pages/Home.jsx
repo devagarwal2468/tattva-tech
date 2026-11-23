@@ -434,7 +434,7 @@ function ProductsPreview() {
       <SectionHeader
         eyebrow="Our products"
         title="Building our own products, too."
-        lead="In-house SaaS products built with the same engineering standards we bring to client work."
+        lead="SaaS products we are building in-house, with the same engineering standards we bring to client work."
         action={<Button to="/products" variant="secondary" arrow>All products</Button>}
       />
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

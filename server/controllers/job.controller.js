@@ -113,7 +113,8 @@ export const createJob = async (req, res, next) => {
 export const updateJob = async (req, res, next) => {
   try {
     const { id } = req.params;
-    let updateData = { ...req.body };
+    const EDITABLE = ['title', 'department', 'employmentType', 'location', 'salary', 'description', 'requirements', 'responsibilities', 'deadline', 'status'];
+    let updateData = Object.fromEntries(Object.entries(req.body).filter(([k]) => EDITABLE.includes(k)));
 
     const parseArray = (input) => {
       if (Array.isArray(input)) return input;

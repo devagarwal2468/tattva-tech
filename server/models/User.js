@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    passwordChangedAt: {
+      type: Date,
+      default: null,
+    },
     password: {
       type: String,
       required: [true, 'Password is required'],
@@ -36,6 +40,8 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
   }
+  // Tokens issued before this moment stop working (see middleware/auth.js).
+  if (!this.isNew) this.passwordChangedAt = new Date(Date.now() - 1000);
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();

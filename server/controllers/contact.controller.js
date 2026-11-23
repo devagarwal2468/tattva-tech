@@ -17,8 +17,9 @@ export const submitContact = async (req, res, next) => {
     const email = str(req.body.email).toLowerCase();
     const message = str(req.body.message);
 
-    // Honeypot: real users never fill the hidden "website" field. Pretend success, store nothing.
-    if (str(req.body.website)) {
+    // Honeypot: real users never fill the hidden field. Pretend success, store nothing.
+    if (str(req.body.hp_check) || str(req.body.website)) {
+      console.warn('[Spam]: Honeypot triggered, enquiry dropped.');
       return res.status(201).json({
         success: true,
         message: 'Thank you! Your message has been received. Our team will get back to you shortly.',
@@ -65,7 +66,7 @@ export const submitContact = async (req, res, next) => {
         message: savedContact.message,
         submissionDate: savedContact.createdAt,
       }),
-      sendEnquiryAcknowledgement({ name: savedContact.name, email: savedContact.email }),
+      sendEnquiryAcknowledgement({ email: savedContact.email }),
     ]);
 
     return res.status(201).json({

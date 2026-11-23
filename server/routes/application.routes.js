@@ -1,4 +1,5 @@
 import express from 'express';
+import { sanitizeRequest } from '../middleware/sanitize.js';
 import {
   submitApplication,
   getApplicationsAdmin,
@@ -13,7 +14,7 @@ import { applicationLimiter } from '../middleware/rateLimits.js';
 const router = express.Router();
 
 // Public: Apply for a job with resume
-router.post('/', applicationLimiter, uploadResume.single('resume'), submitApplication);
+router.post('/', applicationLimiter, uploadResume.single('resume'), sanitizeRequest, submitApplication);
 
 // Admin routes
 router.get('/admin/all', protectAdmin, getApplicationsAdmin);

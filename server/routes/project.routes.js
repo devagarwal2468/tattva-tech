@@ -1,4 +1,5 @@
 import express from 'express';
+import { sanitizeRequest } from '../middleware/sanitize.js';
 import {
   getPublicProjects,
   getAllProjectsAdmin,
@@ -17,8 +18,8 @@ router.get('/', getPublicProjects);
 
 // Admin routes
 router.get('/admin/all', protectAdmin, getAllProjectsAdmin);
-router.post('/', protectAdmin, uploadProjectImage.single('coverImage'), createProject);
-router.put('/:id', protectAdmin, uploadProjectImage.single('coverImage'), updateProject);
+router.post('/', protectAdmin, uploadProjectImage.single('coverImage'), sanitizeRequest, createProject);
+router.put('/:id', protectAdmin, uploadProjectImage.single('coverImage'), sanitizeRequest, updateProject);
 router.patch('/:id/publish', protectAdmin, togglePublishProject);
 router.delete('/:id', protectAdmin, deleteProject);
 

@@ -232,3 +232,76 @@ describe('public content', () => {
     assert.equal(res.body.success, false);
   });
 });
+
+describe('review fixes (2026-11-23)', () => {
+  test('in production, registration needs the invite code even with zero admins', async () => {
+    const User = mongoose.model('User');
+    const saved = await User.find().lean();
+    await User.deleteMany({});
+    process.env.NODE_ENV = 'production';
+    try {
+      const res = await request(app).post('/api/auth/register').send({ name: 'Stranger', email: 'stranger@example.com', password: 'stranger-pass-1' });
+      assert.equal(res.status, 403);
+      assert.equal(await User.countDocuments(), 0);
+    } finally {
+      process.env.NODE_ENV = 'test';
+      await User.collection.insertMany(saved);
+    }
+  });
+
+  test('tokens issued before a password change are rejected', async () => {
+    const login = await request(app).post('/api/auth/login').send({ email: admin.email, password: admin.password });
+    const oldToken = login.body.token;
+    assert.ok(oldToken);
+    await new Promise((r) => setTimeout(r, 1100)); // JWT iat has 1-second resolution
+    const change = await request(app)
+      .post('/api/auth/change-password')
+      .set('Authorization', `Bearer ${oldToken}`)
+      .send({ currentPassword: admin.password, newPassword: 'brand-new-pass-77' });
+    assert.equal(change.status, 200, JSON.stringify(change.body));
+    const me = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${oldToken}`);
+    assert.equal(me.status, 401);
+    const relogin = await request(app).post('/api/auth/login').send({ email: admin.email, password: 'brand-new-pass-77' });
+    assert.equal(relogin.status, 200);
+    const meNew = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${relogin.body.token}`);
+    assert.equal(meNew.status, 200);
+    admin.password = 'brand-new-pass-77';
+    token = relogin.body.token;
+  });
+
+  test('products are not auto-seeded', async () => {
+    const res = await request(app).get('/api/products');
+    assert.equal(res.status, 200);
+    assert.equal(res.body.data.length, 0);
+  });
+
+  test('CORS rejects look-alike vercel.app origins', async () => {
+    const bad = await request(app).get('/api/health').set('Origin', 'https://tattva-tech-attacker.vercel.app');
+    assert.equal(bad.headers['access-control-allow-origin'], undefined);
+    const good = await request(app).get('/api/health').set('Origin', 'https://tattvatechsolutions.in');
+    assert.equal(good.headers['access-control-allow-origin'], 'https://tattvatechsolutions.in');
+  });
+
+  test('project update ignores fields that are not editable', async () => {
+    const login = await request(app).post('/api/auth/login').send({ email: admin.email, password: admin.password });
+    const auth = `Bearer ${login.body.token}`;
+    const created = await request(app).post('/api/projects').set('Authorization', auth)
+      .field('title', 'Whitelist test').field('clientName', 'QA').field('category', 'Web Apps').field('description', 'd');
+    assert.equal(created.status, 201, JSON.stringify(created.body));
+    const id = created.body.data._id;
+    const upd = await request(app).put(`/api/projects/${id}`).set('Authorization', auth)
+      .field('title', 'Renamed').field('createdAt', '2001-01-01T00:00:00.000Z');
+    assert.equal(upd.status, 200, JSON.stringify(upd.body));
+    assert.equal(upd.body.data.title, 'Renamed');
+    assert.notEqual(new Date(upd.body.data.createdAt).getUTCFullYear(), 2001);
+  });
+
+  test('new honeypot field drops the enquiry', async () => {
+    const Contact = mongoose.model('Contact');
+    const before = await Contact.countDocuments();
+    const res = await request(app).post('/api/contact').set('X-Forwarded-For', '10.9.9.9')
+      .send({ name: 'Bot', email: 'bot@example.com', message: 'Buy cheap things now', hp_check: 'http://spam' });
+    assert.equal(res.status, 201);
+    assert.equal(await Contact.countDocuments(), before);
+  });
+});

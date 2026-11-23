@@ -23,7 +23,7 @@ export default function FaqList({ items }) {
                 <Plus className={`h-5 w-5 shrink-0 text-ink-400 transition-transform duration-300 ${isOpen ? 'rotate-45 text-brand-600' : ''}`} aria-hidden="true" />
               </button>
             </h3>
-            <div id={panelId} role="region" className={`grid transition-all duration-300 ${isOpen ? 'grid-rows-[1fr] pb-6 opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+            <div id={panelId} role="region" aria-hidden={!isOpen} className={`grid transition-all duration-300 ${isOpen ? 'grid-rows-[1fr] pb-6 opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
               <p className="overflow-hidden pr-10 leading-relaxed text-ink-500">{item.a}</p>
             </div>
           </div>

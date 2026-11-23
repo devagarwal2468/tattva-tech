@@ -110,9 +110,15 @@ export const sendEnquiryNotificationToCompanyHead = async ({
 };
 
 /** Short auto-acknowledgement to the person who submitted the contact form. */
-export const sendEnquiryAcknowledgement = async ({ name, email }) => {
+// Auto-replies go to an address typed into a public form, so they are OFF unless
+// SEND_AUTO_REPLY=true, and they never echo user-supplied text (prevents the form
+// being used to send spam through the company mailbox).
+const autoReplyEnabled = () => String(process.env.SEND_AUTO_REPLY || '').toLowerCase() === 'true';
+
+export const sendEnquiryAcknowledgement = async ({ email }) => {
+  if (!autoReplyEnabled()) return null;
   const html = layout(`
-    <h2 style="color: #2563eb; margin: 0 0 12px;">Thanks for reaching out, ${e(name)}</h2>
+    <h2 style="color: #2563eb; margin: 0 0 12px;">Thanks for reaching out</h2>
     <p style="color: #334155; font-size: 14px; line-height: 1.6;">
       We have received your message and a member of the ${BRAND} team will get back to you as soon as possible.
     </p>
@@ -166,9 +172,10 @@ export const sendApplicationNotificationToHR = async ({
 };
 
 /** Confirmation email to the candidate. */
-export const sendApplicationConfirmationToCandidate = async ({ applicantName, email, jobTitle }) => {
+export const sendApplicationConfirmationToCandidate = async ({ email, jobTitle }) => {
+  if (!autoReplyEnabled()) return null;
   const html = layout(`
-    <h2 style="color: #2563eb; margin: 0 0 12px;">Thank you for applying, ${e(applicantName)}</h2>
+    <h2 style="color: #2563eb; margin: 0 0 12px;">Thank you for applying</h2>
     <p style="color: #334155; font-size: 14px; line-height: 1.6;">
       We have received your application for the <strong>${e(jobTitle)}</strong> role at ${BRAND}.
     </p>

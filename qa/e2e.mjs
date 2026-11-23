@@ -62,6 +62,19 @@ check('cursor spotlight follows mouse', mx !== '', mx);
 await p.evaluate(() => document.querySelector('footer a[href="/about"]').click()); await wait(800);
 check('route change scrolls to top', (await p.evaluate(() => window.scrollY)) === 0);
 check('page title updates', (await p.title()).startsWith('About Us'));
+// Mobile menu (regression: drawer used to be clipped inside the header)
+const m = await b.newPage();
+const merrs = collectErrors(m);
+await m.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
+await m.goto(`${BASE}/`, { waitUntil: 'networkidle0' });
+await m.click('button[aria-controls=mobile-menu]'); await wait(500);
+const drawer = await m.$eval('#mobile-menu', (e) => { const r = e.getBoundingClientRect(); return { vis: getComputedStyle(e).visibility, h: r.height }; });
+check('mobile menu opens full-height', drawer.vis === 'visible' && drawer.h > 500, `height ${Math.round(drawer.h)}px`);
+const topEl = await m.evaluate(() => { const el = document.elementFromPoint(200, 300); return el?.closest('#mobile-menu') ? 'menu' : el?.tagName; });
+check('mobile menu is on top of page content', topEl === 'menu', topEl);
+await m.evaluate(() => document.querySelector('#mobile-menu a[href="/services/ai-automation"]').click()); await wait(800);
+check('mobile menu link navigates and closes', m.url().endsWith('/services/ai-automation') && (await m.$eval('#mobile-menu', (e) => getComputedStyle(e).visibility)) === 'hidden');
+errs.push(...merrs);
 check('no console/page errors', errs.length === 0, errs.join(' | '));
 
 await b.close();

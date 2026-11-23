@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-import { getJwtSecret, isValidEmail } from '../utils/security.js';
+import { isProduction, getJwtSecret, isValidEmail } from '../utils/security.js';
 
 export const MIN_PASSWORD_LENGTH = 8;
 
@@ -50,7 +50,9 @@ export const registerAdmin = async (req, res, next) => {
     const expectedInvite = (process.env.ADMIN_INVITE_CODE || '').trim();
     const inviteOk = Boolean(expectedInvite) && typeof inviteCode === 'string' && inviteCode.trim() === expectedInvite;
 
-    if (userCount > 0 && !inviteOk) {
+    // In production an invite code is always required (prevents a stranger claiming an
+    // empty database). Locally, the very first admin may register without one.
+    if ((userCount > 0 || isProduction()) && !inviteOk) {
       return res.status(403).json({
         success: false,
         message: 'Admin registration is closed. Ask an existing administrator for an invite code.',

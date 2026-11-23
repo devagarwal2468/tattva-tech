@@ -13,7 +13,7 @@ import { fetchPublicProducts } from '../services/api';
 export default function Products() {
   useSeo({
     title: 'Products',
-    description: 'In-house SaaS products from Tattva Tech for marketing, CRM, AI agents and analytics.',
+    description: 'SaaS products Tattva Tech is building for marketing, CRM, AI agents and analytics.',
   });
   const { data, loading, error, reload } = useAsync(() => fetchPublicProducts(), []);
   const [category, setCategory] = useState('All');
@@ -28,7 +28,7 @@ export default function Products() {
       <PageHero
         eyebrow="Products"
         title="Products for a smarter way to work."
-        lead="Alongside client work, we build our own SaaS products — tools for outreach, sales, AI automation and analytics."
+        lead="Alongside client work, we are building our own SaaS products — tools for outreach, sales, AI automation and analytics."
         breadcrumbs={[{ label: 'Products' }]}
       />
 

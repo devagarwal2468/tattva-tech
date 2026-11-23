@@ -70,6 +70,7 @@ export default function Header() {
     }`;
 
   return (
+    <>
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${hidden && !mobileOpen && !menuOpen ? '-translate-y-full' : 'translate-y-0'} ${
         solid ? 'border-b border-ink-100 bg-white/85 shadow-[0_1px_12px_rgba(15,20,38,0.05)] backdrop-blur-xl' : 'border-b border-transparent bg-transparent'
@@ -157,10 +158,12 @@ export default function Header() {
         </button>
       </div>
 
+    </header>
+
       {/* Mobile drawer */}
       <div
         id="mobile-menu"
-        className={`fixed inset-x-0 bottom-0 top-[72px] overflow-y-auto bg-white transition-all duration-300 lg:hidden ${
+        className={`fixed inset-x-0 bottom-0 top-[72px] z-[45] overflow-y-auto bg-white transition-all duration-300 lg:hidden ${
           mobileOpen ? 'visible opacity-100' : 'invisible opacity-0'
         }`}
       >
@@ -193,6 +196,6 @@ export default function Header() {
           </Button>
         </nav>
       </div>
-    </header>
+    </>
   );
 }

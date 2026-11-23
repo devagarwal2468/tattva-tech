@@ -8,7 +8,8 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "test": "node --test --test-concurrency=1 test/*.test.js",
-    "create-admin": "node scripts/create-admin.js"
+    "create-admin": "node scripts/create-admin.js",
+    "remove-demo-content": "node scripts/remove-demo-content.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
