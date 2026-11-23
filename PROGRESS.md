@@ -134,3 +134,6 @@ Owner feedback: old UI looked bad, no visuals; wants professional, minimalistic,
 **Bugs found & fixed while verifying:** 3D icons had an opaque white square (source files are RGB) → background keyed out; gear hole + one over-keyed pie-chart area fixed; robotics checklist covered the photo on phones → moved below; count-up test was too weak (didn't check final values) → strengthened; LCP was the hero paragraph held at opacity 0 → transform-only animation; fonts self-hosted (no Google requests).
 
 **Verified:** `qa/shots.mjs` 26/26 (13 routes × desktop/mobile, 0 console errors, 0 broken images, 0 sideways scroll); `qa/e2e.mjs` 18/18 (incl. 52 home images load, service card navigation, count-up final values); API 33/33; Lighthouse mobile: Home 90/100/100/100, Services 93/100/100/100, Contact 90/100/100/100, About 94/100/100/100 (Perf/A11y/BP/SEO).
+- Technology strip now shows monochrome logos (Simple Icons 13.21.0, CC0; trademarks noted on /credits).
+- Found while checking the strip: the dev server was still on the old Tailwind config, so text fell back to a system font. Restarted; added `qa/font-check.mjs` (`npm run fonts`) which fails if Inter / Inter Tight / Instrument Serif are not actually applied. Re-verified: fonts PASS, e2e 18/18, shots 26/26.
+- Note for future: restart `vite` after editing `tailwind.config.js`.

@@ -105,8 +105,13 @@ function TechStrip() {
         <div className="mask-fade-x w-full overflow-hidden">
           <ul className="flex w-max animate-marquee gap-12 hover:[animation-play-state:paused]">
             {row.map((t, i) => (
-              <li key={`${t}-${i}`} aria-hidden={i >= technologies.length ? 'true' : undefined} className="whitespace-nowrap font-display text-[1.15rem] font-medium text-ink-600">
-                {t}
+              <li
+                key={`${t.name}-${i}`}
+                aria-hidden={i >= technologies.length ? 'true' : undefined}
+                className="flex items-center gap-2.5 whitespace-nowrap font-display text-[1.05rem] font-medium text-ink-600 opacity-80 transition hover:opacity-100"
+              >
+                <img src={`/assets/logos/${t.logo}.svg`} alt="" width="22" height="22" className="h-[22px] w-[22px] opacity-75" loading="lazy" />
+                {t.name}
               </li>
             ))}
           </ul>

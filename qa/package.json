@@ -6,7 +6,9 @@
   "scripts": {
     "seed": "node seed-local.mjs",
     "shots": "node shots.mjs",
-    "e2e": "node e2e.mjs"
+    "e2e": "node e2e.mjs",
+    "fonts": "node font-check.mjs",
+    "lighthouse": "./lh-compare.sh"
   },
   "devDependencies": {
     "lighthouse": "^12.2.1",

@@ -126,5 +126,6 @@ export const credits = [
     "files": [
       "electronics-lab"
     ]
-  }
+  },
+  {"source": "Simple Icons", "license": "CC0 1.0 — logos are trademarks of their respective owners, shown only to name tools we use", "by": "Simple Icons contributors", "url": "https://simpleicons.org", "files": ["amazonwebservices", "django", "docker", "espressif", "fastapi", "figma", "flutter", "googlecloud", "langchain", "mongodb", "nextdotjs", "nodedotjs", "openai", "postgresql", "python", "pytorch", "raspberrypi", "react", "ros", "tensorflow", "typescript"]}
 ];
