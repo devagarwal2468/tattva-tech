@@ -3,7 +3,7 @@ import Reveal from './Reveal';
 
 export function Section({ id, className = '', children }) {
   return (
-    <section id={id} className={`py-24 sm:py-32 ${className}`}>
+    <section id={id} className={`py-16 sm:py-28 lg:py-32 ${className}`}>
       <div className="container-site">{children}</div>
     </section>
   );
@@ -13,7 +13,7 @@ export function Section({ id, className = '', children }) {
 export function SectionHeader({ eyebrow, title, lead, align = 'left', action, className = '' }) {
   const center = align === 'center';
   return (
-    <Reveal className={`mb-14 sm:mb-20 ${center ? 'mx-auto max-w-3xl text-center' : 'flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between'} ${className}`}>
+    <Reveal className={`mb-10 sm:mb-16 lg:mb-20 ${center ? 'mx-auto max-w-3xl text-center' : 'flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between'} ${className}`}>
       <div className={center ? '' : 'max-w-3xl'}>
         {eyebrow && <p className="eyebrow mb-5">{eyebrow}</p>}
         <h2 className="h-section">{title}</h2>

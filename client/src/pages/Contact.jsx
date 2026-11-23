@@ -234,7 +234,7 @@ export default function Contact() {
       </Section>
 
       <Section className="border-t border-line bg-white">
-        <h2 className="h-section">Our <em className="accent">offices</em></h2>
+        <h2 className="h-section">Our offices</h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {offices.map((o, i) => (
             <Reveal key={o.city} delay={i * 80} className="card overflow-hidden">

@@ -26,44 +26,51 @@ function Frame({ children, className = '' }) {
 
 const Bar = ({ w, className = 'bg-ink-100' }) => <span className={`block h-2 rounded-full ${className}`} style={{ width: w }} />;
 
+const T = ({ children, className = '' }) => <span className={`block truncate text-[9px] leading-tight ${className}`}>{children}</span>;
+
 function MailPreview() {
+  const mails = [['Welcome series', 'Scheduled · Mon 9:00'], ['Product update', 'Draft'], ['Follow-up: demo', 'Sending'], ['Festive offer', 'Sent']];
   return (
-    <div className="grid grid-cols-[38%_1fr] gap-3">
-      <div className="space-y-2">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className={`rounded-md p-2 ${i === 0 ? 'bg-brand-50 ring-1 ring-brand-200' : 'bg-ink-50'}`}>
-            <Bar w="70%" className={i === 0 ? 'bg-ink-700' : 'bg-ink-200'} />
-            <span className="mt-1.5 block"><Bar w="90%" className="bg-ink-100" /></span>
+    <div className="grid grid-cols-[42%_1fr] gap-3">
+      <div className="space-y-1.5">
+        {mails.map(([title, meta], i) => (
+          <div key={title} className={`rounded-md px-2 py-1.5 ${i === 0 ? 'bg-brand-50 ring-1 ring-brand-200' : 'bg-ink-50'}`}>
+            <T className="font-semibold text-ink-800">{title}</T>
+            <T className="mt-0.5 text-ink-400">{meta}</T>
           </div>
         ))}
       </div>
       <div className="rounded-md bg-ink-50 p-3">
-        <Bar w="55%" className="bg-ink-700" />
-        <div className="mt-3 space-y-1.5">
-          <Bar w="95%" className="bg-ink-100" />
-          <Bar w="88%" className="bg-ink-100" />
-          <Bar w="70%" className="bg-ink-100" />
+        <T className="text-[10px] font-semibold text-ink-900">Welcome series</T>
+        <div className="mt-2 space-y-1.5">
+          <Bar w="95%" className="bg-ink-200" />
+          <Bar w="88%" className="bg-ink-200" />
+          <Bar w="62%" className="bg-ink-200" />
         </div>
-        <span className="mt-4 inline-block rounded-md bg-gradient-to-r from-brand-500 to-cyan-400 px-3 py-1.5 text-[9px] font-semibold text-white">Send campaign</span>
+        <span className="mt-4 inline-block rounded-md bg-brand-600 px-3 py-1.5 text-[9px] font-semibold text-white">Send campaign</span>
       </div>
     </div>
   );
 }
 
 function CrmPreview() {
-  const cols = [['bg-sky-400', 3], ['bg-brand-400', 2], ['bg-emerald-400', 2]];
+  const cols = [
+    ['New lead', 'bg-sky-400', ['Website revamp', 'Clinic app', 'ERP audit']],
+    ['Proposal', 'bg-brand-500', ['School robotics lab', 'AI chatbot']],
+    ['Won', 'bg-emerald-400', ['Retail dashboard', 'IoT sensors']],
+  ];
   return (
     <div className="grid grid-cols-3 gap-2">
-      {cols.map(([dot, n], c) => (
-        <div key={c} className="rounded-md bg-ink-50 p-2">
-          <div className="mb-2 flex items-center gap-1.5">
+      {cols.map(([name, dot, cards]) => (
+        <div key={name} className="rounded-md bg-ink-50 p-1.5">
+          <div className="mb-1.5 flex items-center gap-1">
             <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-            <Bar w="55%" className="bg-ink-300" />
+            <T className="font-semibold text-ink-700">{name}</T>
           </div>
           <div className="space-y-1.5">
-            {Array.from({ length: n }, (_, i) => (
-              <div key={i} className="rounded border border-line bg-white p-1.5">
-                <Bar w="80%" className="bg-ink-200" />
+            {cards.map((c) => (
+              <div key={c} className="rounded border border-line bg-white px-1.5 py-1 shadow-sm">
+                <T className="font-medium text-ink-800">{c}</T>
                 <span className="mt-1 block"><Bar w="45%" className="bg-ink-100" /></span>
               </div>
             ))}
@@ -76,15 +83,15 @@ function CrmPreview() {
 
 function AgentPreview() {
   return (
-    <div className="space-y-2.5">
-      <div className="ml-auto w-[70%] rounded-lg rounded-br-sm bg-brand-600 p-2">
-        <Bar w="85%" className="bg-ink-700" />
+    <div className="space-y-2">
+      <div className="ml-auto w-[72%] rounded-lg rounded-br-sm bg-brand-600 px-2.5 py-1.5">
+        <T className="text-white">Summarise this week’s support tickets</T>
       </div>
       <div className="flex gap-2">
-        <span className="h-5 w-5 shrink-0 rounded-md bg-gradient-to-br from-brand-400 to-cyan-300" />
-        <div className="w-[78%] rounded-lg rounded-tl-sm bg-ink-50 p-2">
-          <Bar w="92%" className="bg-ink-200" />
-          <span className="mt-1.5 block"><Bar w="70%" className="bg-ink-100" /></span>
+        <span className="h-5 w-5 shrink-0 rounded-md bg-gradient-to-br from-brand-500 to-brand-300" />
+        <div className="w-[80%] rounded-lg rounded-tl-sm bg-ink-50 px-2.5 py-1.5">
+          <T className="text-ink-800">Grouped into 4 themes. Top issue: login errors.</T>
+          <T className="mt-1 text-ink-400">Drafted replies for your review.</T>
         </div>
       </div>
       <div className="flex flex-wrap gap-1.5 pl-7">
@@ -100,17 +107,17 @@ function AnalyticsPreview() {
   const bars = [35, 55, 42, 70, 60, 85, 72];
   return (
     <div>
-      <div className="mb-3 grid grid-cols-3 gap-2">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="rounded-md bg-ink-50 p-2">
-            <Bar w="50%" className="bg-ink-100" />
-            <span className="mt-1.5 block"><Bar w="70%" className="bg-ink-300" /></span>
+      <div className="mb-2.5 grid grid-cols-3 gap-2">
+        {['Visitors', 'Leads', 'Conversion'].map((k) => (
+          <div key={k} className="rounded-md bg-ink-50 px-2 py-1.5">
+            <T className="text-ink-400">{k}</T>
+            <span className="mt-1 block"><Bar w="70%" className="bg-ink-300" /></span>
           </div>
         ))}
       </div>
       <div className="flex h-16 items-end gap-1.5 rounded-md bg-ink-50 p-2">
         {bars.map((h, i) => (
-          <span key={i} className="flex-1 rounded-sm bg-gradient-to-t from-brand-600 to-brand-300 opacity-90" style={{ height: `${h}%` }} />
+          <span key={i} className="flex-1 rounded-sm bg-gradient-to-t from-brand-600 to-brand-300" style={{ height: `${h}%` }} />
         ))}
       </div>
     </div>

@@ -28,8 +28,7 @@ function HeroVisual() {
 
       {/* Main tile */}
       <div className="absolute inset-[7%] overflow-hidden rounded-[2.5rem] border border-white/80 bg-gradient-to-br from-white via-brand-50/80 to-[#eeeaff] shadow-float">
-        <div className="dots-bg absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_50%_30%,#000_20%,transparent_70%)]" />
-        <img src="/assets/illus/pair-programming.svg" alt="" className="absolute inset-x-[10%] bottom-[9%] h-[62%] w-[80%] object-contain" />
+        <img src="/assets/illus/pair-programming.svg" alt="" className="absolute inset-x-[7%] bottom-[8%] h-[74%] w-[86%] object-contain" />
         <div className="absolute left-7 top-7 flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
           <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
@@ -41,17 +40,16 @@ function HeroVisual() {
       <img src="/assets/3d/rocket.webp" alt="" className="float-slow absolute right-[-2%] top-[2%] w-[24%] drop-shadow-[0_24px_30px_rgba(23,40,150,0.35)]" />
       <img src="/assets/3d/chat.webp" alt="" className="float-mid absolute left-[-4%] top-[30%] w-[19%] drop-shadow-[0_20px_26px_rgba(23,40,150,0.3)]" />
       <img src="/assets/3d/gear.webp" alt="" className="float-fast absolute bottom-[4%] right-[6%] w-[17%] drop-shadow-[0_20px_26px_rgba(23,40,150,0.3)]" />
-      <img src="/assets/3d/cube.webp" alt="" className="float-mid absolute left-[18%] top-[-1%] w-[11%] drop-shadow-[0_16px_20px_rgba(23,40,150,0.25)]" />
 
       {/* Glass chips */}
-      <div className="float-slow absolute bottom-[14%] left-[-6%] flex items-center gap-3 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-card backdrop-blur-md [animation-delay:-3s]">
+      <div className="float-slow absolute bottom-[14%] left-2 flex sm:left-[-6%] items-center gap-3 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-card backdrop-blur-md [animation-delay:-3s]">
         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600"><Check className="h-4 w-4" /></span>
         <span>
           <span className="block text-[0.8rem] font-medium text-ink-900">Weekly demos</span>
           <span className="block text-[0.72rem] text-ink-500">See progress, not promises</span>
         </span>
       </div>
-      <div className="float-mid absolute right-[-3%] top-[46%] rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-card backdrop-blur-md">
+      <div className="float-mid absolute right-2 top-[46%] rounded-2xl sm:right-[-3%] border border-white/70 bg-white/80 px-4 py-3 shadow-card backdrop-blur-md">
         <span className="block text-[0.72rem] text-ink-500">From idea</span>
         <span className="block font-serif text-lg italic leading-tight text-ink-900">to impact</span>
       </div>
@@ -82,7 +80,7 @@ function Hero() {
           <dl className="mt-14 grid max-w-lg animate-fade-up grid-cols-3 gap-6 border-t border-line pt-8 [animation-delay:360ms]">
             {stats.slice(0, 3).map((s) => (
               <div key={s.label}>
-                <dd className="font-serif text-[2.4rem] leading-none text-ink-900"><CountUp value={s.value} /></dd>
+                <dd className="font-display text-[2.2rem] font-semibold leading-none tracking-tight text-ink-900"><CountUp value={s.value} /></dd>
                 <dt className="mt-2 text-sm text-ink-500">{s.label}</dt>
               </div>
             ))}
@@ -108,7 +106,7 @@ function TechStrip() {
               <li
                 key={`${t.name}-${i}`}
                 aria-hidden={i >= technologies.length ? 'true' : undefined}
-                className="flex items-center gap-2.5 whitespace-nowrap font-display text-[1.05rem] font-medium text-ink-600 opacity-80 transition hover:opacity-100"
+                className="flex items-center gap-2.5 whitespace-nowrap font-display text-[1.05rem] font-medium text-ink-600 transition hover:text-ink-900"
               >
                 <img src={`/assets/logos/${t.logo}.svg`} alt="" width="22" height="22" className="h-[22px] w-[22px] opacity-75" loading="lazy" />
                 {t.name}
@@ -130,18 +128,15 @@ function ServiceCard({ s, wide = false }) {
     <Link to={`/services/${s.slug}`} className={`card-interactive group flex h-full flex-col overflow-hidden ${wide ? 'lg:flex-row' : ''}`}>
       <div className={`relative overflow-hidden ${wide ? 'lg:w-[55%]' : ''} ${s.photo ? '' : 'tile-soft m-2 rounded-[1.4rem]'}`}>
         {s.photo ? (
-          <img src={s.photo} alt="Robotic arm in an automation lab" loading="lazy" className="zoom-img h-60 w-full object-cover lg:h-full" />
+          <img src="/assets/photos/electronics-lab.webp" alt="Engineer assembling an electronics board" loading="lazy" className="zoom-img h-60 w-full object-cover lg:h-full" />
         ) : (
-          <div className="flex h-52 items-center justify-center p-6">
+          <div className="flex h-40 items-center justify-center p-5 sm:h-52 sm:p-6">
             <img src={s.illus} alt="" loading="lazy" className="zoom-img h-full w-full object-contain" />
           </div>
         )}
       </div>
       <div className={`flex flex-1 flex-col p-7 ${wide ? 'lg:justify-center lg:p-10' : 'pt-5'}`}>
-        <div className="flex items-center gap-3">
-          <img src={s.icon3d} alt="" width="36" height="36" className="h-9 w-9 object-contain" loading="lazy" />
-          <h3 className={`font-display font-semibold tracking-tight ${wide ? 'text-2xl' : 'text-xl'}`}>{s.title}</h3>
-        </div>
+        <h3 className={`font-display font-semibold tracking-tight ${wide ? 'text-2xl' : 'text-xl'}`}>{s.title}</h3>
         <p className="mt-3 leading-relaxed text-ink-500">{wide ? s.overview[1] : s.short}</p>
         <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium text-ink-900">
           Learn more <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
@@ -158,7 +153,7 @@ function Services() {
     <Section>
       <SectionHeader
         eyebrow="What we do"
-        title={<>One partner for software, AI, <em className="accent">robotics</em> and growth.</>}
+        title={<>One partner for software, AI, robotics and growth.</>}
         lead="Engineering, design and marketing under one roof — so your product moves from idea to impact without hand-offs between agencies."
         action={<Button to="/services" variant="secondary" arrow>All services</Button>}
       />
@@ -169,10 +164,10 @@ function Services() {
           </Reveal>
         ))}
         <Reveal delay={180}>
-          <Link to="/contact" className="group flex h-full min-h-[320px] flex-col justify-between overflow-hidden rounded-[1.75rem] bg-ink-900 p-8 text-white transition duration-500 hover:-translate-y-1 hover:shadow-card-hover">
+          <Link to="/contact" className="group flex h-full min-h-[320px] flex-col justify-between overflow-hidden rounded-[1.75rem] border border-brand-100 bg-gradient-to-br from-brand-50 via-white to-[#f1efff] p-8 text-ink-900 transition duration-500 hover:-translate-y-1 hover:shadow-card-hover">
             <div>
               <p className="font-serif text-[2rem] italic leading-tight">Not sure what you need?</p>
-              <p className="mt-3 text-ink-300">Tell us the problem. We’ll recommend the right mix of technology, team and budget.</p>
+              <p className="mt-3 text-ink-500">Tell us the problem. We’ll recommend the right mix of technology, team and budget.</p>
             </div>
             <div className="flex items-end justify-between">
               <span className="inline-flex items-center gap-1.5 font-medium">
@@ -197,23 +192,13 @@ function WhyUs() {
       <div className="container-site grid items-center gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
         <Reveal className="relative">
           <div className="overflow-hidden rounded-[2rem] border border-line shadow-float">
-            <img src="/assets/photos/workspace-minimal.webp" alt="A calm, minimal workspace" loading="lazy" className="aspect-[4/5] w-full object-cover sm:aspect-square" />
-          </div>
-          <div className="absolute -bottom-8 right-4 rounded-3xl border border-line bg-white/90 p-6 shadow-card backdrop-blur sm:-right-6">
-            <dl className="grid grid-cols-2 gap-x-8 gap-y-4">
-              {stats.map((s) => (
-                <div key={s.label}>
-                  <dd className="font-serif text-4xl leading-none text-ink-900"><CountUp value={s.value} /></dd>
-                  <dt className="mt-1.5 max-w-[8rem] text-xs text-ink-500">{s.label}</dt>
-                </div>
-              ))}
-            </dl>
+            <img src="/assets/photos/design-wireframes.webp" alt="Designer sketching wireframes next to a laptop" loading="lazy" className="aspect-[4/5] w-full object-cover sm:aspect-square" />
           </div>
         </Reveal>
         <div>
           <Reveal>
             <p className="eyebrow mb-5">Why Tattva Tech</p>
-            <h2 className="h-section">A long-term partner, <em className="accent">not just a vendor.</em></h2>
+            <h2 className="h-section">A long-term partner, not just a vendor.</h2>
             <p className="lead mt-6">
               We collaborate with startups, businesses, agencies and institutions through project-based work, white-label delivery, dedicated teams and long-term partnerships.
             </p>
@@ -243,14 +228,14 @@ function Robotics() {
     <Section className="bg-white">
       <SectionHeader
         eyebrow="Robotics & IoT"
-        title={<>Software that moves in the <em className="accent">real world.</em></>}
+        title={<>Software that moves in the real world.</>}
         lead="Beyond software, we design custom robots and connected devices end to end — and make robotics practical and affordable for schools, colleges, research teams and small businesses."
         action={<Button to="/services/robotics-iot" arrow>Explore robotics</Button>}
       />
       <div className="grid gap-5 lg:grid-cols-[1.7fr_1fr]">
         <Reveal className="group relative">
-          <div className="overflow-hidden rounded-[2rem]">
-            <img src="/assets/photos/robot-cleanroom.webp" alt="Industrial robot arm in a clean-room automation lab" loading="lazy" className="zoom-img h-full max-h-[560px] min-h-[260px] w-full object-cover" />
+          <div className="overflow-hidden rounded-[2rem] sm:h-full">
+            <img src="/assets/photos/robot-cleanroom.webp" alt="Industrial robot arm in a clean-room automation lab" loading="lazy" className="zoom-img h-full min-h-[260px] w-full object-cover sm:min-h-[460px]" />
           </div>
           <div className="mt-3 rounded-3xl border border-line bg-white p-6 sm:absolute sm:bottom-6 sm:left-6 sm:mt-0 sm:max-w-md sm:border-white/60 sm:bg-white/85 sm:backdrop-blur-md">
             <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -288,13 +273,13 @@ function Process() {
       <SectionHeader
         align="center"
         eyebrow="How we work"
-        title={<>A clear path from first call <em className="accent">to launch.</em></>}
+        title={<>A clear path from first call to launch.</>}
         lead="Short feedback loops, visible progress and no surprises — whether it is a website, an AI system or a robot."
       />
       <ol className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-4">
         {processSteps.map((step, i) => (
           <Reveal as="li" key={step.title} delay={i * 100} className="border-t border-ink-900/80 pt-7">
-            <span className="font-serif text-5xl italic text-brand-600">0{i + 1}</span>
+            <span className="font-display text-sm font-semibold tabular-nums tracking-[0.14em] text-brand-600">STEP 0{i + 1}</span>
             <h3 className="mt-5 font-display text-xl font-semibold">{step.title}</h3>
             <p className="mt-3 leading-relaxed text-ink-500">{step.desc}</p>
           </Reveal>
@@ -315,7 +300,7 @@ function ProductsPreview() {
     <Section className="bg-white">
       <SectionHeader
         eyebrow="Our products"
-        title={<>Building our <em className="accent">own products,</em> too.</>}
+        title={<>Building our own products, too.</>}
         lead="SaaS products we are building in-house, with the same engineering standards we bring to client work."
         action={<Button to="/products" variant="secondary" arrow>All products</Button>}
       />
@@ -342,15 +327,15 @@ const audiences = [
 function Audiences() {
   return (
     <Section>
-      <SectionHeader align="center" eyebrow="Who we work with" title={<>Built for teams of <em className="accent">every size.</em></>} />
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <SectionHeader align="center" eyebrow="Who we work with" title={<>Built for teams of every size.</>} />
+      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
         {audiences.map((a, i) => (
-          <Reveal key={a.title} delay={i * 90} className="card-interactive group p-7">
-            <div className="tile-soft flex h-28 items-center justify-center">
-              <img src={a.icon} alt="" width="88" height="88" className="h-[88px] w-[88px] object-contain transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-[-4deg]" loading="lazy" />
+          <Reveal key={a.title} delay={i * 90} className="card-interactive group p-4 sm:p-7">
+            <div className="tile-soft flex h-20 items-center justify-center sm:h-28">
+              <img src={a.icon} alt="" width="88" height="88" className="h-14 w-14 sm:h-[88px] sm:w-[88px] object-contain transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-[-4deg]" loading="lazy" />
             </div>
-            <h3 className="mt-6 font-display text-lg font-semibold">{a.title}</h3>
-            <p className="mt-2 leading-relaxed text-ink-500">{a.desc}</p>
+            <h3 className="mt-4 font-display text-base font-semibold sm:mt-6 sm:text-lg">{a.title}</h3>
+            <p className="mt-1.5 text-sm leading-relaxed text-ink-500 sm:mt-2 sm:text-base">{a.desc}</p>
           </Reveal>
         ))}
       </div>
@@ -365,10 +350,10 @@ function WorkPreview() {
     <Section className="bg-white">
       <SectionHeader
         eyebrow="Selected work"
-        title={<>Real solutions, <em className="accent">shipped.</em></>}
+        title={<>Real solutions, shipped.</>}
         action={<Button to="/work" variant="secondary" arrow>View all work</Button>}
       />
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className={`grid gap-6 md:grid-cols-2 ${projects.length >= 3 ? 'lg:grid-cols-3' : ''} ${projects.length === 1 ? 'md:max-w-xl' : ''}`}>
         {projects.slice(0, 3).map((p, i) => (
           <Reveal key={p._id || p.title} delay={i * 90}>
             <ProjectCard project={p} />
@@ -385,7 +370,7 @@ function Faq() {
       <div className="grid gap-14 lg:grid-cols-[1fr_1.6fr]">
         <Reveal>
           <p className="eyebrow mb-5">FAQ</p>
-          <h2 className="h-section">Questions, <em className="accent">answered.</em></h2>
+          <h2 className="h-section">Questions, answered.</h2>
           <p className="lead mt-6">Can’t find what you are looking for?</p>
           <Link to="/contact" className="group mt-3 inline-flex items-center gap-1.5 font-medium text-ink-900">
             Talk to our team <ArrowUpRight className="h-4 w-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />

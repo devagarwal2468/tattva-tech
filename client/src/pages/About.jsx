@@ -49,7 +49,7 @@ export default function About() {
         <dl className="container-site grid grid-cols-2 py-12 md:grid-cols-4">
           {stats.map((s, i) => (
             <div key={s.label} className={`px-2 py-4 text-center md:px-6 ${i > 0 ? 'md:border-l md:border-line' : ''}`}>
-              <dd className="font-serif text-5xl text-ink-900 sm:text-6xl"><CountUp value={s.value} /></dd>
+              <dd className="font-display text-5xl font-semibold tracking-tight text-ink-900 sm:text-6xl"><CountUp value={s.value} /></dd>
               <dt className="mt-2 text-sm text-ink-500">{s.label}</dt>
             </div>
           ))}
@@ -63,7 +63,7 @@ export default function About() {
           </Reveal>
           <Reveal delay={100}>
             <p className="eyebrow mb-5">Our story</p>
-            <h2 className="h-section">From an idea to a <em className="accent">connected team.</em></h2>
+            <h2 className="h-section">From an idea to a connected team.</h2>
             <div className="mt-7 space-y-5 text-lg leading-relaxed text-ink-500">
               <p>
                 Tattva — “essence” in Sanskrit — reflects how we work: get to the essence of a problem, then build the simplest solution that truly solves it.
@@ -77,7 +77,7 @@ export default function About() {
       </Section>
 
       <Section className="bg-white">
-        <SectionHeader align="center" eyebrow="What we bring" title={<>Three disciplines, <em className="accent">one team.</em></>} />
+        <SectionHeader align="center" eyebrow="What we bring" title={<>Three disciplines, one team.</>} />
         <div className="grid gap-6 md:grid-cols-3">
           {capabilities.map((c, i) => (
             <Reveal key={c.title} delay={i * 90} className="card-interactive group p-8">
@@ -106,7 +106,7 @@ export default function About() {
       </Section>
 
       <Section className="bg-white">
-        <SectionHeader eyebrow="Leadership" title={<>The people behind <em className="accent">Tattva Tech.</em></>} />
+        <SectionHeader eyebrow="Leadership" title={<>The people behind Tattva Tech.</>} />
         <div className="grid gap-6 sm:grid-cols-2 lg:max-w-4xl">
           {leadership.map((p, i) => (
             <Reveal key={p.name} delay={i * 90} className="card flex items-center gap-6 p-7">
@@ -124,7 +124,7 @@ export default function About() {
       </Section>
 
       <Section>
-        <SectionHeader eyebrow="How we work" title={<>Principles we <em className="accent">live by.</em></>} />
+        <SectionHeader eyebrow="How we work" title={<>Principles we live by.</>} />
         <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
           {principles.map((p, i) => (
             <Reveal key={p.title} delay={i * 90}>
@@ -137,11 +137,11 @@ export default function About() {
       </Section>
 
       <Section className="bg-white">
-        <SectionHeader eyebrow="Ways to work with us" title={<>Flexible <em className="accent">engagement models.</em></>} />
+        <SectionHeader eyebrow="Ways to work with us" title={<>Flexible engagement models.</>} />
         <div className="grid gap-px overflow-hidden rounded-[1.75rem] border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
           {engagementModels.map((m, i) => (
             <Reveal key={m.title} delay={i * 70} className="bg-white p-8">
-              <span className="font-serif text-3xl italic text-brand-600">0{i + 1}</span>
+              <span className="font-display text-sm font-semibold tabular-nums tracking-[0.14em] text-brand-600">0{i + 1}</span>
               <h3 className="mt-4 font-display text-lg font-semibold">{m.title}</h3>
               <p className="mt-2 leading-relaxed text-ink-500">{m.desc}</p>
             </Reveal>

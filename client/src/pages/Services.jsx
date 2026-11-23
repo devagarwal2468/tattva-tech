@@ -28,7 +28,7 @@ function ServiceRow({ s, index }) {
           )}
         </Link>
         <div>
-          <p className="font-serif text-2xl italic text-brand-600">{String(index + 1).padStart(2, '0')}</p>
+          <p className="font-display text-sm font-semibold tabular-nums tracking-[0.14em] text-brand-600">{String(index + 1).padStart(2, '0')}</p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-[2.4rem]">{s.title}</h2>
           <p className="lead mt-5">{s.overview[0]}</p>
           <ul className="mt-7 grid gap-3 sm:grid-cols-2">
@@ -77,11 +77,11 @@ export default function Services() {
       </section>
 
       <Section>
-        <SectionHeader align="center" eyebrow="Our process" title={<>How we turn ideas <em className="accent">into impact.</em></>} />
+        <SectionHeader align="center" eyebrow="Our process" title={<>How we turn ideas into impact.</>} />
         <ol className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-4">
           {processSteps.map((p, i) => (
             <Reveal as="li" key={p.title} delay={i * 90} className="border-t border-ink-900/80 pt-7">
-              <span className="font-serif text-5xl italic text-brand-600">0{i + 1}</span>
+              <span className="font-display text-sm font-semibold tabular-nums tracking-[0.14em] text-brand-600">STEP 0{i + 1}</span>
               <h3 className="mt-5 font-display text-xl font-semibold">{p.title}</h3>
               <p className="mt-3 leading-relaxed text-ink-500">{p.desc}</p>
             </Reveal>

@@ -137,3 +137,10 @@ Owner feedback: old UI looked bad, no visuals; wants professional, minimalistic,
 - Technology strip now shows monochrome logos (Simple Icons 13.21.0, CC0; trademarks noted on /credits).
 - Found while checking the strip: the dev server was still on the old Tailwind config, so text fell back to a system font. Restarted; added `qa/font-check.mjs` (`npm run fonts`) which fails if Inter / Inter Tight / Instrument Serif are not actually applied. Re-verified: fonts PASS, e2e 18/18, shots 26/26.
 - Note for future: restart `vite` after editing `tailwind.config.js`.
+
+### 2026-11-23 — Independent design critique + fixes
+A fresh reviewer agent critiqued 22 screenshots against Linear/Vercel/Stripe/Codal-level sites. I checked each point myself before acting:
+- Fixed: hero de-cluttered (cube + dot grid removed, scene ~2× larger, chips stay on-screen on phones); service cards now one visual each (duplicate 3D title icons removed); dark "Not sure?" tile made light; serif italic accent limited to page titles + CTA (was in ~10 section headings); step numbers/stats in the display font; "Why Tattva" uses a stronger photo, no duplicated stats; robotics photo no longer used twice (service card uses the electronics photo) and its checklist sits inside the photo on desktop; product mock-ups show real-looking UI text instead of grey bars; mobile: less vertical padding, 2-column audience cards, WhatsApp button appears after scrolling, balanced heading wraps; Work grid adapts to 1–2 projects.
+- Not a site bug: the "blank FAQ/CTA" in the reviewer's mobile shots came from my screenshot script stopping at the page's initial height — fixed in `qa/lib.mjs`.
+- Owner decisions still open: company-domain email (footer shows Gmail).
+- Verified after fixes: fonts PASS, e2e 18/18, shots 26/26, Lighthouse mobile Home 92/100/100/100, Services 93/100/100/100.

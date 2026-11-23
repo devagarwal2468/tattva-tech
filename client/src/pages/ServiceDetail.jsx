@@ -47,7 +47,7 @@ export default function ServiceDetail() {
         <div className="container-site grid gap-14 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
           <Reveal>
             <img src={service.icon3d} alt="" width="80" height="80" className="h-20 w-20 object-contain" />
-            <h2 className="h-section mt-6">What we <em className="accent">do</em></h2>
+            <h2 className="h-section mt-6">What we do</h2>
             <div className="mt-7 space-y-5 text-lg leading-relaxed text-ink-500">
               {service.overview.map((p) => <p key={p}>{p}</p>)}
             </div>
@@ -72,7 +72,7 @@ export default function ServiceDetail() {
         <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
           <Reveal>
             <p className="eyebrow mb-5">Technology</p>
-            <h2 className="h-section">Tools we <em className="accent">trust.</em></h2>
+            <h2 className="h-section">Tools we trust.</h2>
             <p className="lead mt-6">Proven, well-supported technologies — so your product is easy to maintain and hire for.</p>
           </Reveal>
           <Reveal delay={100} className="flex flex-wrap content-start gap-3">
@@ -84,11 +84,11 @@ export default function ServiceDetail() {
       </Section>
 
       <Section className="bg-white">
-        <h2 className="h-section mb-14">How an engagement <em className="accent">runs</em></h2>
+        <h2 className="h-section mb-14">How an engagement runs</h2>
         <ol className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-4">
           {processSteps.map((p, i) => (
             <Reveal as="li" key={p.title} delay={i * 80} className="border-t border-ink-900/80 pt-7">
-              <span className="font-serif text-5xl italic text-brand-600">0{i + 1}</span>
+              <span className="font-display text-sm font-semibold tabular-nums tracking-[0.14em] text-brand-600">STEP 0{i + 1}</span>
               <h3 className="mt-5 font-display text-xl font-semibold">{p.title}</h3>
               <p className="mt-3 leading-relaxed text-ink-500">{p.desc}</p>
             </Reveal>

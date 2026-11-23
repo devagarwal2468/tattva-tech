@@ -27,8 +27,8 @@ export function collectErrors(page) {
 
 /** Scroll through the page like a person so scroll-reveal animations run. */
 export async function scrollThrough(page) {
-  const h = await page.evaluate(() => document.body.scrollHeight);
-  for (let y = 0; y < h; y += 400) {
+  // Re-read the height every step: the page grows while lazy content loads.
+  for (let y = 0; y < (await page.evaluate(() => document.body.scrollHeight)); y += 400) {
     await page.evaluate((yy) => window.scrollTo(0, yy), y);
     await wait(60);
   }

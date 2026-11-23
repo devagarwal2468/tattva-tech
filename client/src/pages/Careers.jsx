@@ -224,7 +224,7 @@ export default function Careers() {
       </PageHero>
 
       <Section>
-        <SectionHeader eyebrow="Life at Tattva" title={<>Why work <em className="accent">with us</em></>} />
+        <SectionHeader eyebrow="Life at Tattva" title={<>Why work with us</>} />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {perks.map((p, i) => (
             <Reveal key={p.title} delay={i * 80} className="card-interactive group p-7">
@@ -237,7 +237,7 @@ export default function Careers() {
       </Section>
 
       <Section id="open-roles" className="border-t border-line bg-white">
-        <SectionHeader eyebrow="Open roles" title={<>Current <em className="accent">openings</em></>} />
+        <SectionHeader eyebrow="Open roles" title={<>Current openings</>} />
         <div className="space-y-4">
           {loading && <CardSkeletons count={3} className="h-28" />}
           {!loading && error && <ErrorState onRetry={reload} />}
